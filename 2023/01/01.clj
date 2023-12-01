@@ -1,28 +1,28 @@
 (require '[clojure.string :as s])
 
-(def input (slurp "input.txt"))
-(def numbers (zipmap ["zero" "one" "two" "three" "four" "five" "six" "seven" "eight" "nine"] (range 10)))
+(def numbers ["zero" "one" "two" "three" "four" "five" "six" "seven" "eight" "nine"])
+
 (defn digit? [c] (<= (int \0) (int c) (int \9)))
 
-(defn crunch-one
+(defn mark
   [word]
-  (->> (for [[k v] numbers]
+  (->> (for [[k v] (zipmap numbers (range (count numbers)))]
          (when (s/starts-with? word k)
            (apply str v (subs word 1))))
        (filter some?)
        first))
 
-(defn crunch
+(defn mark-all
   [word]
-  (loop [word word new ""]
+  (loop [word word marked ""]
     (if (< (count word) 1)
-      new
-      (let [word (or (crunch-one word) word)]
-        (recur (subs word 1) (str new (first word)))))))
+      marked
+      (let [word (or (mark word) word)]
+        (recur (subs word 1) (str marked (first word)))))))
 
 (defn part1
-  [lines]
-  (as-> lines $
+  [text]
+  (as-> text $
     (s/split $ #"\n")
     (map #(filter digit? %) $)
     (map #(list (first %) (last %)) $)
@@ -31,8 +31,8 @@
     (apply + $)))
 
 (defn part2
-  [input]
-  (part1 (s/join "\n" (map crunch (s/split input #"\n")))))
+  [text]
+  (part1 (s/join "\n" (map mark-all (s/split text #"\n")))))
 
-(part1 input)
-(part2 input)
+(let [input (slurp "input.txt")]
+  (println (part1 input) (part2 input)))
