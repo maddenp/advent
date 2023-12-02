@@ -17,8 +17,8 @@
   (loop [word word marked ""]
     (if (< (count word) 1)
       marked
-      (let [word (or (mark word) word)]
-        (recur (subs word 1) (str marked (first word)))))))
+      (let [w (or (mark word) word)]
+        (recur (subs w 1) (str marked (first w)))))))
 
 (defn part1
   [text]
