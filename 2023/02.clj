@@ -23,9 +23,9 @@
 
 (defn color-max
   [draws]
-  (let [colors [:red :green :blue]]
-    (apply merge (map #(hash-map % (apply max (map (fn [d] (get d % 0)) draws))) colors))))
-;;; TODO simplify ^^^
+  (apply merge
+         (for [c [:red :green :blue]]
+           {c (apply max (for [d draws] (get d c 0)))})))
 
 (defn power
   [draws]
