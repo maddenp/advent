@@ -1,5 +1,7 @@
 (require '[clojure.string :as s])
 
+(def colors [:red :green :blue])
+
 (defn draw-maps
   [draw-str]
   (apply merge
@@ -14,7 +16,7 @@
 
 (defn valid-draw?
   [draw]
-  (let [max {:red 12 :green 13 :blue 14}]
+  (let [max (zipmap colors [12 13 14])]
     (every? true? (map #(<= (draw %) (max %)) (keys draw)))))
 
 (defn valid-game?
@@ -23,9 +25,7 @@
 
 (defn color-max
   [draws]
-  (apply merge
-         (for [c [:red :green :blue]]
-           {c (apply max (map #(get % c 0) draws))})))
+  (apply merge (for [c colors] {c (apply max (map #(get % c 0) draws))})))
 
 (defn power
   [draws]
