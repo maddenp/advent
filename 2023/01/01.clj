@@ -22,10 +22,7 @@
 
 (defn part1
   [text]
-  (let [f #(as-> % $
-             (filter digit? $)
-             (str (first $) (last $))
-             (Integer/parseInt $))]
+  (let [f #(Integer/parseInt (let [ds (filter digit? %)] (str (first ds) (last ds))))]
     (apply + (map f (s/split text #"\n")))))
 
 (defn part2
