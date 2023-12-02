@@ -32,13 +32,12 @@
   (apply * (vals (color-max draws))))
 
 (defn part1
-  [input]
-  (apply + (map :n (filter valid-game? (map game-map input)))))
-;;; TODO FACTOR OUT game-map call ^^^ and below
+  [gm]
+  (apply + (map :n (filter valid-game? gm))))
 
 (defn part2
-  [input]
-  (apply + (map power (map :draws (map game-map input)))))
+  [gm]
+  (apply + (map power (map :draws gm))))
 
 (let [input (s/split (slurp "02.txt") #"\n")]
-  (println (part1 input) (part2 input)))
+  (apply println (map #(% (map game-map input)) [part1 part2])))
