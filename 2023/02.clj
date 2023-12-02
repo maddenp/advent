@@ -25,7 +25,7 @@
   [draws]
   (apply merge
          (for [c [:red :green :blue]]
-           {c (apply max (for [d draws] (get d c 0)))})))
+           {c (apply max (map #(get % c 0) draws))})))
 
 (defn power
   [draws]
