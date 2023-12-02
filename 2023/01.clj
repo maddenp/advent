@@ -27,5 +27,5 @@
   [text]
   (part1 (s/join "\n" (map mark-all (s/split text #"\n")))))
 
-(let [input (slurp "input.txt")]
+(let [input (slurp "01.txt")]
   (println (part1 input) (part2 input)))
