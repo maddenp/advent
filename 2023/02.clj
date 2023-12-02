@@ -2,34 +2,34 @@
 
 (def colors [:red :green :blue])
 
-(defn draw-maps
-  [draw-str]
+(defn grab-maps
+  [grab-str]
   (apply merge
          (map #(let [[n c] (s/split % #" ")] {(keyword c) (Integer/parseInt n)})
-              (s/split draw-str #", "))))
+              (s/split grab-str #", "))))
 
 (defn game-map
   [game-str]
-  (let [[_ n draws] (re-matches #"^Game (\d+): (.*)$" game-str)]
+  (let [[_ n grabs] (re-matches #"^Game (\d+): (.*)$" game-str)]
     {:n (Integer/parseInt n)
-     :draws (map draw-maps (s/split draws #"; "))}))
+     :grabs (map grab-maps (s/split grabs #"; "))}))
 
-(defn valid-draw?
-  [draw]
+(defn valid-grab?
+  [grab]
   (let [max (zipmap colors [12 13 14])]
-    (every? true? (map #(<= (draw %) (max %)) (keys draw)))))
+    (every? true? (map #(<= (grab %) (max %)) (keys grab)))))
 
 (defn valid-game?
   [game]
-  (every? true? (map valid-draw? (:draws game))))
+  (every? true? (map valid-grab? (:grabs game))))
 
 (defn color-max
-  [draws]
-  (apply merge (for [c colors] {c (apply max (map #(get % c 0) draws))})))
+  [grabs]
+  (apply merge (for [c colors] {c (apply max (map #(get % c 0) grabs))})))
 
 (defn power
-  [draws]
-  (apply * (vals (color-max draws))))
+  [grabs]
+  (apply * (vals (color-max grabs))))
 
 (defn part1
   [gm]
@@ -37,7 +37,7 @@
 
 (defn part2
   [gm]
-  (apply + (map power (map :draws gm))))
+  (apply + (map power (map :grabs gm))))
 
 (let [input (s/split (slurp "02.txt") #"\n")]
   (apply println (map #(% (map game-map input)) [part1 part2])))
