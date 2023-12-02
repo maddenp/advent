@@ -1,8 +1,6 @@
 #_(require '[clojure.pprint :only pprint])
 (require '[clojure.string :as s])
 
-(def input (s/split (slurp "02.txt") #"\n"))
-
 (defn draw-maps
   [draw-str]
   (apply merge
@@ -12,22 +10,21 @@
 (defn game-map
   [game-str]
   (let [[_ n draws] (re-matches #"^Game (\d+): (.*)$" game-str)]
-    {:n n :draws (map draw-maps (s/split draws #"; "))}))
+    {:n (Integer/parseInt n)
+     :draws (map draw-maps (s/split draws #"; "))}))
 
-(defn valid-draw
+(defn valid-draw?
   [draw]
   (let [max {"red" 12 "green" 13 "blue" 14}]
     (every? true? (map #(<= (draw %) (max %)) (keys draw)))))
 
-(defn valid-game
+(defn valid-game?
   [game]
-  (every? true? (map valid-draw (:draws game))))
+  (every? true? (map valid-draw? (:draws game))))
 
-#_(pprint (map game-map input))
+(defn part1
+  [input]
+  (apply + (map :n (filter valid-game? (map game-map input)))))
 
-(def games (map game-map input))
-
-(first games)
-(valid-game (first games))
-(last games)
-(valid-game (last games))
+(let [input (s/split (slurp "02.txt") #"\n")]
+  (println (part1 input) #_(part2 input)))
