@@ -1,4 +1,3 @@
-(require '[clojure.pprint :only pprint])
 (require '[clojure.string :as s])
 
 (defn draw-maps
@@ -15,33 +14,31 @@
 
 (defn valid-draw?
   [draw]
-  (let [max {"red" 12 "green" 13 "blue" 14}]
+  (let [max {:red 12 :green 13 :blue 14}]
     (every? true? (map #(<= (draw %) (max %)) (keys draw)))))
 
 (defn valid-game?
   [game]
   (every? true? (map valid-draw? (:draws game))))
 
-(defn part1
-  [input]
-  (apply + (map :n (filter valid-game? (map game-map input)))))
-
-#_(let [input (s/split (slurp "02.txt") #"\n")]
-  (println (part1 input) #_(part2 input)))
-
 (defn color-max
   [draws]
   (let [colors [:red :green :blue]]
     (apply merge (map #(hash-map % (apply max (map (fn [d] (get d % 0)) draws))) colors))))
+;;; TODO simplify ^^^
 
 (defn power
   [draws]
   (apply * (vals (color-max draws))))
 
-(color-max [{:red 4 :blue 3} {:red 1 :blue 6 :green 2} {:green 2}])
-(power [{:red 4 :blue 3} {:red 1 :blue 6 :green 2} {:green 2}])
-(apply + (map power (map :draws (map game-map input))))
-#_(def input (s/split (slurp "02.txt") #"\n"))
-#_(pprint (map game-map input))
+(defn part1
+  [input]
+  (apply + (map :n (filter valid-game? (map game-map input)))))
+;;; TODO FACTOR OUT game-map call ^^^ and below
 
-#_(filter :x [{:a 1 :b 2} {:a 3 :b 4}])
+(defn part2
+  [input]
+  (apply + (map power (map :draws (map game-map input)))))
+
+(let [input (s/split (slurp "02.txt") #"\n")]
+  (println (part1 input) (part2 input)))
