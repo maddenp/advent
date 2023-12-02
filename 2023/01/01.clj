@@ -24,7 +24,7 @@
   [text]
   (let [f #(as-> % $
              (filter digit? $)
-             (apply str [(first $) (last $)])
+             (str (first $) (last $))
              (Integer/parseInt $))]
     (apply + (map f (s/split text #"\n")))))
 
