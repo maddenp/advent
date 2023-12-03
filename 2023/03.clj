@@ -63,17 +63,24 @@
        (apply +)                                   ; sum
        ))
 
-(let [input (s/split (slurp "03.txt") #"\n")
+(defn part2
+  [a]
+  (let [gear-adj (->> (numbers a)
+                      (map (fn [x] (merge x {:adj (filter #(= \* (at a %)) (:adj x))})))
+                      (filter (fn [x] (seq (:adj x)))))]
+    gear-adj))
+
+#_(let [input (s/split (slurp "03.txt") #"\n")
       a (to-array-2d input)]
   (println (part1 a)))
 
-#_(part1 (to-array-2d ["467..114.."
-                       "...*......"
-                       "..35..633."
-                       "......#..."
-                       "617*......"
-                       ".....+.58."
-                       "..592....."
-                       "......755."
-                       "...$.*...."
-                       ".664.598.."])) ; 4361
+(part2 (to-array-2d ["467..114.."
+                     "...*......"
+                     "..35..633."
+                     "......#..."
+                     "617*......"
+                     ".....+.58."
+                     "..592....."
+                     "......755."
+                     "...$.*...."
+                     ".664.598.."])) ; 4361
