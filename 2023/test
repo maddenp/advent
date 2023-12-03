@@ -1,5 +1,9 @@
 #!/bin/bash -eu
 
+t01() { assert 01 "53974 52840"; }
+t02() { assert 02 "2545 78111"; }
+t03() { assert 03 "520019"; } 
+
 assert() {
   echo -n "Testing $1 => $2: "
   test "$(clojure -M $1.clj)" == "$2" && echo OK || fail
@@ -10,6 +14,10 @@ fail() {
   exit 1
 }
 
-assert 01 "53974 52840"
-assert 02 "2545 78111"
-assert 03 "520019"
+if [[ -n "${1:-}" ]]; then
+  t$1
+else
+  for t in $(declare -f | grep "^t[0-9][0-9] () $" | sed 's/ .*//'); do
+    $t
+  done
+fi

@@ -24,17 +24,16 @@
   [a]
   (for [run (runs a)]
     (let [rcs (map :rc run)]
-      {:n (->> (map #(at a %) rcs)     ; coords -> chars
-               (apply str)             ; combine chars -> str
-               Integer/parseInt)       ; str -> int
-       :adj (as-> (map :halo run) $    ; get all neighbor coords
-              (reduce into [] $)       ; all coords in one vector
-              (set $)                  ; remove duplicates
-              (difference $ (set rcs)) ; remove coords belonging to number
-              (map #(at a %) $)        ; coords -> chars
-              (set $)                  ; remove duplicates
-              (filter #(not= \. %) $)  ; remove '.'s
-              )}))) 
+      {:n (->> (map #(at a %) rcs)         ; coords -> chars
+               (apply str)                 ; combine chars -> str
+               Integer/parseInt)           ; str -> int
+       :adj (as-> (map :halo run) $        ; get all neighbor coords
+              (reduce into [] $)           ; all coords in one vector
+              (set $)                      ; remove duplicates
+              (difference $ (set rcs))     ; remove coords belonging to number
+              (map #(at a %) $)            ; coords -> chars
+              (set $)                      ; remove duplicates
+              (filter #(not= \. %) $))}))) ; remove '.'s
 
 (defn runs
   "Groups of runs of successive digits in the same row."
@@ -55,38 +54,45 @@
         selector (fn [coord] (when (pred (at a coord)) {:rc coord :halo (halo a coord)}))]
     (filter some? (map selector coords))))
 
-(require '[clojure.pprint :refer [pprint]])
-(pprint (numbers (to-array-2d ["467..114.."
-                               "...*......"
-                               "..35..633."
-                               "......#..."
-                               "617*......"
-                               ".....+.58."
-                               "..592....."
-                               "......755."
-                               "...$.*...."
-                               ".664.598.."]))) ; 4361
+(defn part1
+  [a]
+  (->> (numbers a)              ; all numbers & adjacent symbols
+       (filter #(seq (:adj %))) ; drop if adjacent to no symbols
+       (map :n)                 ; extract numbers
+       (apply +)))              ; sum
+
+(let [input (s/split (slurp "03.txt") #"\n")
+      a (to-array-2d input)]
+  (println (part1 a)))
+
+#_(part1 (to-array-2d ["467..114.."
+                     "...*......"
+                     "..35..633."
+                     "......#..."
+                     "617*......"
+                     ".....+.58."
+                     "..592....."
+                     "......755."
+                     "...$.*...."
+                     ".664.598.."])) ; 4361
 
 #_(defn part1
-    [input]
-    (let [a (to-array-2d input)
-          h (alength a)
-          w (alength (aget a 0))
-          runs (for [[r c] (prod (range h) (range w))]
-                 (let [x (at a r c)]
-                   (when (digit? x)
-                     {(some sym? (neighbors a r c)) x})))]
-      (->> runs
-           (partition-by some?)
-           (filter #(some true? (flatten (map keys %))))
-           (map #(Integer/parseInt (apply str (flatten (map vals %)))))
-           (apply +))))
-
-#_(let [input (s/split (slurp "03.txt") #"\n")]
-    (println (part1 input)))
+[input]
+(let [a (to-array-2d input)
+      h (alength a)
+      w (alength (aget a 0))
+      runs (for [[r c] (prod (range h) (range w))]
+             (let [x (at a r c)]
+               (when (digit? x)
+                 {(some sym? (neighbors a r c)) x})))]
+  (->> runs
+       (partition-by some?)
+       (filter #(some true? (flatten (map keys %))))
+       (map #(Integer/parseInt (apply str (flatten (map vals %)))))
+       (apply +))))
 
 #_(defn neighbors
-    [a r c]
-    (map (fn [[rd cd]] (at a (+ r rd) (+ c cd)))
-         (prod [-1 0 +1] [-1 0 +1])))
+[a r c]
+(map (fn [[rd cd]] (at a (+ r rd) (+ c cd)))
+     (prod [-1 0 +1] [-1 0 +1])))
 
