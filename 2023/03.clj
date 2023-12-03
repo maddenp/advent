@@ -39,10 +39,16 @@
 (defn numbers
   [a]
   (for [run (runs a)]
-    (let [rcs (map :rc run)
-          ns (Integer/parseInt (apply str (map #(at a %) rcs)))
-          hs (set (map #(at a %) (difference (set (reduce into [] (map :halo run))) (set rcs))))]
-      {:n ns :adj hs})))
+    (let [rcs (map :rc run)]
+      {:n (->> (map #(at a %) rcs)
+               (apply str)
+               Integer/parseInt)
+       :adj (as-> (map :halo run) $
+              (reduce into [] $)
+              (set $)
+              (difference $ (set rcs))
+              (map #(at a %) $)
+              (set $))})))
 
 (require '[clojure.pprint :refer [pprint]])
 (pprint (numbers (to-array-2d ["467..114.."
