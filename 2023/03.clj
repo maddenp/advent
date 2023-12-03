@@ -2,7 +2,7 @@
          '[clojure.set :refer [difference]]
          '[clojure.string :as s])
 
-(declare halo runs)
+(declare runs select)
 
 (defn at [a [r c]] (try (aget a r c) (catch Exception _ \.)))
 (defn cols [a] (alength (aget a 0)))
@@ -10,15 +10,9 @@
 (defn rows [a] (alength a))
 (defn sym? [c] (not (or (digit? c) (= \. c))))
 
-(defn digits
-  [a]
-  (let [pred digit?
-        coords (prod (range (rows a)) (range (cols a)))
-        select (fn [coord] (when (pred (at a coord)) {:rc coord :halo (halo a coord)}))]
-    (filter some? (map select coords))))
-
 (defn halo
   [a [r c]]
+  ;; The coordinates of all in-bounds neighbors.
   (->> (prod [-1 0 +1] [-1 0 +1])
        (map (fn [[dr dc]] [(+ r dr) (+ c dc)]))
        (filter (fn [[hr hc]] (and (not= [hr hc] [r c])
@@ -43,7 +37,8 @@
 
 (defn runs
   [a]
-  (loop [ds (digits a) ns [] n nil]
+  ;; Group runs of successive digits in the same row.
+  (loop [ds (select a digit?) ns [] n nil]
     (if (seq ds)
       (let [d (first ds) [r c] (:rc d) [nr nc] (:rc (last n))]
         (cond
@@ -51,6 +46,12 @@
           (and (= r nr) (= c (inc nc))) (recur (rest ds) ns (conj n d))
           :else (recur (rest ds) (conj ns n) [d])))
       (conj ns n))))
+
+(defn select
+  [a pred]
+  (let [coords (prod (range (rows a)) (range (cols a)))
+        selector (fn [coord] (when (pred (at a coord)) {:rc coord :halo (halo a coord)}))]
+    (filter some? (map selector coords))))
 
 (require '[clojure.pprint :refer [pprint]])
 (pprint (numbers (to-array-2d ["467..114.."
