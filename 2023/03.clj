@@ -41,8 +41,8 @@
   (for [run (runs a)]
     (let [rcs (map :rc run)
           ns (Integer/parseInt (apply str (map #(at a %) rcs)))
-          hs (difference (set (reduce into [] (map :halo run))) (set rcs))]
-      {:n ns :halo hs})))
+          hs (set (map #(at a %) (difference (set (reduce into [] (map :halo run))) (set rcs))))]
+      {:n ns :adj hs})))
 
 (require '[clojure.pprint :refer [pprint]])
 (pprint (numbers (to-array-2d ["467..114.."
