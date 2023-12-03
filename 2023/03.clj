@@ -48,7 +48,8 @@
               (set $)
               (difference $ (set rcs))
               (map #(at a %) $)
-              (set $))})))
+              (set $)
+              (filter #(not= \. %) $))})))
 
 (require '[clojure.pprint :refer [pprint]])
 (pprint (numbers (to-array-2d ["467..114.."
