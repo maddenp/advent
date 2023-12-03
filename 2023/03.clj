@@ -17,7 +17,7 @@
     (filter some? (map selector coords))))
 
 (defn halo
-  "The coordinates of all in-bounds neighbors."
+  "All in-bounds adjacent cooridnates."
   [a [r c]]
   (->> (prod [-1 0 +1] [-1 0 +1])
        (map (fn [[dr dc]] [(+ r dr) (+ c dc)]))
@@ -26,20 +26,17 @@
                                   (<= 0 hc (dec (cols a))))))))
 
 (defn numbers
-  "Numbers from the input along with adjacent chars."
+  "Numbers and their adjacent coords."
   [a]
   (for [run (runs a)]
     (let [rcs (map :rc run)]
-      {:n (->> (map #(at a %) rcs)         ; coords -> chars
-               (apply str)                 ; combine chars -> str
-               Integer/parseInt)           ; str -> int
-       :adj (as-> (map :halo run) $        ; get all neighbor coords
-              (reduce into [] $)           ; all coords in one vector
-              (set $)                      ; remove duplicates
-              (difference $ (set rcs))     ; remove coords belonging to number
-              (map #(at a %) $)            ; coords -> chars
-              (set $)                      ; remove duplicates
-              (filter #(not= \. %) $))}))) ; remove '.'s
+      {:n (->> (map #(at a %) rcs)          ; coords -> chars
+               (apply str)                  ; combine chars -> str
+               Integer/parseInt)            ; str -> int
+       :adj (as-> (map :halo run) $         ; get all adjacent coords
+              (reduce into [] $)            ; all coords in one vector
+              (set $)                       ; remove duplicates
+              (difference $ (set rcs)))}))) ; remove coords belonging to number
 
 (defn runs
   "Groups of runs of successive digits in the same row."
@@ -55,10 +52,15 @@
 
 (defn part1
   [a]
-  (->> (numbers a)              ; all numbers & adjacent symbols
-       (filter #(seq (:adj %))) ; drop if adjacent to no symbols
-       (map :n)                 ; extract numbers
-       (apply +)))              ; sum
+  (->> (for [n (numbers a)]
+         {:n (:n n)
+          :adj (->> (:adj n)                 ; all numbers & adjacent coords
+                    (map #(at a %))          ; coords -> chars
+                    set                      ; remove duplicates
+                    (filter #(not= \. %)))}) ; remove '.'s
+       (filter #(seq (:adj %)))              ; drop if adjacent to no symbols
+       (map :n)                              ; extract numbers
+       (apply +)))                           ; sum
 
 (let [input (s/split (slurp "03.txt") #"\n")
       a (to-array-2d input)]
