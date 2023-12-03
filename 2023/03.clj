@@ -11,8 +11,8 @@
 (defn sym? [c] (not (or (digit? c) (= \. c))))
 
 (defn halo
+  "The coordinates of all in-bounds neighbors."
   [a [r c]]
-  ;; The coordinates of all in-bounds neighbors.
   (->> (prod [-1 0 +1] [-1 0 +1])
        (map (fn [[dr dc]] [(+ r dr) (+ c dc)]))
        (filter (fn [[hr hc]] (and (not= [hr hc] [r c])
@@ -20,6 +20,7 @@
                                   (<= 0 hc (dec (cols a))))))))
 
 (defn numbers
+  "Numbers from the input along with adjacent chars."
   [a]
   (for [run (runs a)]
     (let [rcs (map :rc run)]
@@ -36,8 +37,8 @@
               )}))) 
 
 (defn runs
+  "Groups of runs of successive digits in the same row."
   [a]
-  ;; Group runs of successive digits in the same row.
   (loop [ds (select a digit?) ns [] n nil]
     (if (seq ds)
       (let [d (first ds) [r c] (:rc d) [nr nc] (:rc (last n))]
@@ -48,6 +49,7 @@
       (conj ns n))))
 
 (defn select
+  "Selection of coordinates where char-at-coord matches predicate."
   [a pred]
   (let [coords (prod (range (rows a)) (range (cols a)))
         selector (fn [coord] (when (pred (at a coord)) {:rc coord :halo (halo a coord)}))]
