@@ -2,13 +2,19 @@
          '[clojure.set :refer [difference]]
          '[clojure.string :as s])
 
-(declare runs select)
+(declare halo runs)
 
 (defn at [a [r c]] (try (aget a r c) (catch Exception _ \.)))
 (defn cols [a] (alength (aget a 0)))
-(defn digit? [c] (<= (int \0) (int c) (int \9)))
 (defn rows [a] (alength a))
-(defn sym? [c] (not (or (digit? c) (= \. c))))
+
+(defn digits
+  "Coordinates containing digits."
+  [a]
+  (let [coords (prod (range (rows a)) (range (cols a)))
+        digit? #(<= (int \0) (int %) (int \9))
+        selector (fn [coord] (when (digit? (at a coord)) {:rc coord :halo (halo a coord)}))]
+    (filter some? (map selector coords))))
 
 (defn halo
   "The coordinates of all in-bounds neighbors."
@@ -38,7 +44,7 @@
 (defn runs
   "Groups of runs of successive digits in the same row."
   [a]
-  (loop [ds (select a digit?) ns [] n nil]
+  (loop [ds (digits a) ns [] n nil]
     (if (seq ds)
       (let [d (first ds) [r c] (:rc d) [nr nc] (:rc (last n))]
         (cond
@@ -46,13 +52,6 @@
           (and (= r nr) (= c (inc nc))) (recur (rest ds) ns (conj n d))
           :else (recur (rest ds) (conj ns n) [d])))
       (conj ns n))))
-
-(defn select
-  "Selection of coordinates where char-at-coord matches predicate."
-  [a pred]
-  (let [coords (prod (range (rows a)) (range (cols a)))
-        selector (fn [coord] (when (pred (at a coord)) {:rc coord :halo (halo a coord)}))]
-    (filter some? (map selector coords))))
 
 (defn part1
   [a]
@@ -66,33 +65,12 @@
   (println (part1 a)))
 
 #_(part1 (to-array-2d ["467..114.."
-                     "...*......"
-                     "..35..633."
-                     "......#..."
-                     "617*......"
-                     ".....+.58."
-                     "..592....."
-                     "......755."
-                     "...$.*...."
-                     ".664.598.."])) ; 4361
-
-#_(defn part1
-[input]
-(let [a (to-array-2d input)
-      h (alength a)
-      w (alength (aget a 0))
-      runs (for [[r c] (prod (range h) (range w))]
-             (let [x (at a r c)]
-               (when (digit? x)
-                 {(some sym? (neighbors a r c)) x})))]
-  (->> runs
-       (partition-by some?)
-       (filter #(some true? (flatten (map keys %))))
-       (map #(Integer/parseInt (apply str (flatten (map vals %)))))
-       (apply +))))
-
-#_(defn neighbors
-[a r c]
-(map (fn [[rd cd]] (at a (+ r rd) (+ c cd)))
-     (prod [-1 0 +1] [-1 0 +1])))
-
+                       "...*......"
+                       "..35..633."
+                       "......#..."
+                       "617*......"
+                       ".....+.58."
+                       "..592....."
+                       "......755."
+                       "...$.*...."
+                       ".664.598.."])) ; 4361
