@@ -52,15 +52,16 @@
 
 (defn part1
   [a]
-  (->> (for [n (numbers a)]
-         {:n (:n n)
-          :adj (->> (:adj n)                 ; all numbers & adjacent coords
-                    (map #(at a %))          ; coords -> chars
-                    set                      ; remove duplicates
-                    (filter #(not= \. %)))}) ; remove '.'s
-       (filter #(seq (:adj %)))              ; drop if adjacent to no symbols
-       (map :n)                              ; extract numbers
-       (apply +)))                           ; sum
+  (->> (for [x (numbers a)]                        ; update :adj for each :n ...
+         (merge x {:adj (->> (:adj x)              ; all numbers & adjacent coords
+                             (map #(at a %))       ; coords -> chars
+                             set                   ; remove duplicates
+                             (filter #(not= \. %)) ; remove '.'s
+                             )}))                  ; then...
+       (filter #(seq (:adj %)))                    ; drop if adjacent to no symbols
+       (map :n)                                    ; extract numbers
+       (apply +)                                   ; sum
+       ))
 
 (let [input (s/split (slurp "03.txt") #"\n")
       a (to-array-2d input)]
