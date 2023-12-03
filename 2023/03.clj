@@ -1,22 +1,15 @@
 (require '[clojure.math.combinatorics :as c]
          '[clojure.string :as s])
 
-(def neighbor-offsets (c/cartesian-product [-1 0 +1] [-1 0 +1]))
-
 (defn digit? [c] (<= (int \0) (int c) (int \9)))
 (defn sym? [c] (not (or (digit? c) (= \. c))))
-
-(defn at
-  [a r c]
-  (try (aget a r c) (catch Exception e \.)))
-
-(defn neighbor-at
-  [a r c [rd cd]]
-  (at a (+ r rd) (+ c cd)))
+(defn at [a r c] (try (aget a r c) (catch Exception e \.)))
+(defn neighbor-at [a r c [rd cd]] (at a (+ r rd) (+ c cd)))
 
 (defn neighbors
   [a r c]
-  (map #(neighbor-at a r c %) neighbor-offsets))
+  (map #(neighbor-at a r c %)
+       (c/cartesian-product [-1 0 +1] [-1 0 +1])))
 
 (defn part1
   [input]
