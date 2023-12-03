@@ -1,6 +1,8 @@
-(require '[clojure.math.combinatorics :refer [cartesian-product] :rename {cartesian-product prod}]
-         '[clojure.set :refer [difference]]
-         '[clojure.string :as s])
+(require '[clojure.math.combinatorics
+           :refer [cartesian-product combinations]
+           :rename {cartesian-product prod}]
+         '[clojure.set :refer [difference intersection]]
+          '[clojure.string :as s])
 
 (declare halo runs)
 
@@ -68,19 +70,13 @@
   (let [gear-adj (->> (numbers a)
                       (map (fn [x] (merge x {:adj (filter #(= \* (at a %)) (:adj x))})))
                       (filter (fn [x] (seq (:adj x)))))]
-    gear-adj))
+    (->> (for [[x1 x2] (combinations gear-adj 2)]
+           (when (seq (intersection (set (:adj x1)) (set (:adj x2))))
+             [x1 x2]))
+         (filter some?)
+         (map #(apply * (map :n %)))
+         (apply +))))
 
-#_(let [input (s/split (slurp "03.txt") #"\n")
+(let [input (s/split (slurp "03.txt") #"\n")
       a (to-array-2d input)]
-  (println (part1 a)))
-
-(part2 (to-array-2d ["467..114.."
-                     "...*......"
-                     "..35..633."
-                     "......#..."
-                     "617*......"
-                     ".....+.58."
-                     "..592....."
-                     "......755."
-                     "...$.*...."
-                     ".664.598.."])) ; 4361
+  (println (part1 a) (part2 a)))
