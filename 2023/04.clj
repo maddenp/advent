@@ -9,7 +9,7 @@
             "Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36"
             "Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"])
 
-(defn wins
+(defn card-wins
   [card]
   (->> (re-matches #"^.*:\s*([\d ]+)\s*\|\s*([\d ]*)$" card)
        rest
@@ -18,28 +18,27 @@
        (apply intersection)
        count))
 
-(defn score-card
+(defn card-score
   [card]
-  (int (pow 2 (dec (wins card)))))
+  (int (pow 2 (dec (card-wins card)))))
 
 (defn part1
   [cards]
-  (apply + (map score-card cards)))
+  (apply + (map card-score cards)))
+
+(defn part2
+  [cards]
+  (loop [xs (repeat (count cards) 1) wins (map card-wins cards) total 0]
+    (if (seq xs)
+      (recur
+        (concat (mapv + (repeat (first wins) (first xs)) (rest xs)) (drop (inc (first wins)) xs))
+        (rest wins)
+        (+ total (first xs)))
+      total)))
 
 (let [cards (s/split (slurp "04.txt") #"\n")]
-  (println (part1 cards) #_(part2 cards)))
-
-;; (defn part2
-;;   [cards]
-;;   (for [card in cards]
-;;     (->> (re-matches #"^.*:\s*([\d ]+)\s*\|\s*([\d ]*)$" card)
-;;          rest
-;;          (map #(s/split % #"\s+"))
-;;          (map #(set (map (fn [x] (Integer/parseInt x)) %)))
-;;          (apply intersection)
-;;          count
-;;          dec
-;;          (pow 2)
-;;          int
+  (println (part1 cards) (part2 cards)))
 
 #_(part2 cards)
+#_(let [xs [1 1 1 1 1 1] wins [4 2 2 1 0 0]]
+  (concat (mapv + (repeat (first wins) 1) (rest xs)) (drop (first wins) xs)))
