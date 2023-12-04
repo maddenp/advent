@@ -2,7 +2,7 @@
            :refer [cartesian-product combinations]
            :rename {cartesian-product prod}]
          '[clojure.set :refer [difference intersection]]
-          '[clojure.string :as s])
+         '[clojure.string :as s])
 
 (declare halo runs)
 
