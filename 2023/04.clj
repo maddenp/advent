@@ -20,7 +20,7 @@
 
 (defn score-card
   [card]
-  (->> (wins card) dec (pow 2) int))
+  (int (pow 2 (dec (wins card)))))
 
 (defn part1
   [cards]
