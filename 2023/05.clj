@@ -50,11 +50,19 @@
   (let [lines (s/split block #"\n")
         [_ src dst] (re-matches #"^([^-]+)-to-([^\s]+).*$" (first lines))
         ranges (map strs->range (rest lines))]
-    ranges
-    ))
+    {(keyword src) {:to (keyword dst) :corr (apply merge ranges)}}))
 
+(defn path
+  [maps key n]
+  (let [map (key maps)]
+    (println n key map)
+    (if (= :location key)
+      n
+      (let [next-key (:to map)
+            next-n (get (:corr map) n n)]
+        (path maps next-key next-n)))))
+    
 (let [blocks (s/split almanac #"(?s)\n\n")
       seeds (strs->ints (last (s/split (first blocks) #": ")))
-      maps (map block->map (rest blocks))]
-  maps
-  )
+      maps (into {} (map block->map (rest blocks)))]
+  (apply min (for [seed seeds] (path maps :seed seed))))
