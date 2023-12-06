@@ -43,7 +43,7 @@
 (defn strs->incl
   [strs]
   (let [[dst src n] (strs->nums strs)]
-    (fn [s] (when (<= src s (dec (+ src n))) (+ dst (- s src)))))) ; PM use #()
+    #(when (<= src % (dec (+ src n))) (+ dst (- % src)))))
 
 (defn block->map [block]
   (let [lines (s/split block #"\n")
