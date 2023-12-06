@@ -1,5 +1,7 @@
 (require '[clojure.string :as s])
 
+(defn s->i [s] (Long/parseLong s))
+
 (defn n-wins
   [[time distance]]
   (->> (map #(* (- time %) %) (range 1 time))
@@ -7,28 +9,20 @@
        count))
 
 (defn part1
-  [document]
-  (let [pairs (apply map vector
-                     (map (fn [line] (as-> line $
-                                       (re-matches #"^[^:]+:\s*(.*)$" $)
-                                       (last $)
-                                       (s/split $ #"\s+")
-                                       (map #(Integer/parseInt %) $)))
-                          (s/split-lines document)))]
-    (apply * (map n-wins pairs))))
+  [numstrs]
+  (->> (map #(map s->i (s/split % #"\s+")) numstrs)
+       (apply map vector)
+       (map n-wins)
+       (apply *)))
 
 (defn part2
-  [document]
-  (let [[t d] (map (fn [line] (as-> line $
-                                (re-matches #"^[^:]+:\s*(.*)$" $)
-                                (last $)
-                                (s/replace $ #"\s+" "")
-                                (Long/parseLong $)))
-                   (s/split-lines document))]
-    (n-wins [t d])))
+  [numstrs]
+  (->> (map #(s->i (s/replace % #"\s+" "")) numstrs)
+       n-wins))
 
-(let [document (slurp "06.txt")]
-  (println (part1 document) (part2 document)))
+(let [input (s/split-lines (slurp "06.txt"))
+      numstrs (map #(last (re-matches #"^[^:]+:\s*(.*)$" %)) input)]
+  (println (part1 numstrs) (part2 numstrs)))
 
 (comment
   (def document
