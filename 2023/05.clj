@@ -57,9 +57,7 @@
   (let [map (key maps)]
     (if (= :location key)
       n
-      (let [next-key (:to map)
-            next-n ((:corr map) n)]
-        (path maps next-key next-n)))))
+      (path maps (:to map) ((:corr map) n)))))
 
 (defn part1
   [almanac]
