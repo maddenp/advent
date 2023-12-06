@@ -38,7 +38,7 @@
 
 (defn strs->nums
   [strs]
-   (map #(Long/parseLong %) (s/split strs #"\s+")))
+  (map #(Long/parseLong %) (s/split strs #"\s+")))
 
 (defn strs->incl
   [strs]
@@ -60,9 +60,17 @@
 (defn part1
   [almanac]
   (let [blocks (s/split almanac #"(?s)\n\n")
-        seeds (strs->nums (last (s/split (first blocks) #": ")))
-        maps (into {} (map block->map (rest blocks)))]
+        maps (into {} (map block->map (rest blocks)))
+        seeds (strs->nums (last (s/split (first blocks) #": ")))]
+    (apply min (for [seed seeds] (path maps :seed seed)))))
+
+(defn part2
+  [almanac]
+  (let [blocks (s/split almanac #"(?s)\n\n")
+        maps (into {} (map block->map (rest blocks)))
+        seed-range (fn [[start n]] (range start (+ start n)))
+        seeds (flatten (map seed-range (partition 2 (strs->nums (last (s/split (first blocks) #": "))))))]
     (apply min (for [seed seeds] (path maps :seed seed)))))
 
 (let [almanac (slurp "05.txt")]
-  (println (part1 almanac)))
+    (println (part1 almanac) (part2 almanac)))
