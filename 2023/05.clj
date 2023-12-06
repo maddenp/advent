@@ -55,14 +55,19 @@
 (defn path
   [maps key n]
   (let [map (key maps)]
-    (println n key map)
     (if (= :location key)
       n
       (let [next-key (:to map)
             next-n (get (:corr map) n n)]
         (path maps next-key next-n)))))
-    
-(let [blocks (s/split almanac #"(?s)\n\n")
-      seeds (strs->ints (last (s/split (first blocks) #": ")))
-      maps (into {} (map block->map (rest blocks)))]
-  (apply min (for [seed seeds] (path maps :seed seed))))
+
+(defn part1
+  [almanac]
+  (let [blocks (s/split almanac #"(?s)\n\n")
+        seeds (strs->ints (last (s/split (first blocks) #": ")))
+        maps (into {} (map block->map (rest blocks)))]
+    (apply min (for [seed seeds] (path maps :seed seed)))))
+
+(part1 almanac)
+#_(let [almanac (slurp "05.txt")]
+  (println (part1 almanac)))
