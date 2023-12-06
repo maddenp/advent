@@ -50,12 +50,12 @@
         [_ cat1 cat2] (re-matches #"^([^-]+)-to-([^\s]+).*$" (first lines))
         incls (map strs->incl (rest lines))
         next (fn [s] (first (filter identity (conj (mapv #(% s) incls) s))))]
-    {(keyword cat1) {:to (keyword cat2) :corr next}}))
+    {(keyword cat1) {:to (keyword cat2) :next next}}))
 
 (defn path
   [maps key n]
   (let [map (key maps)]
-    (if (= :location key) n (path maps (:to map) ((:corr map) n)))))
+    (if (= :location key) n (path maps (:to map) ((:next map) n)))))
 
 (defn part1
   [almanac]
