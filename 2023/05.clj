@@ -38,7 +38,7 @@
 
 (defn strs->ints
   [strs]
-  (map #(Integer/parseInt %) (s/split strs #"\s+")))
+   (map #(Long/parseLong %) (s/split strs #"\s+")))
 
 (defn strs->range
   [strs]
@@ -68,6 +68,6 @@
         maps (into {} (map block->map (rest blocks)))]
     (apply min (for [seed seeds] (path maps :seed seed)))))
 
-(part1 almanac)
-#_(let [almanac (slurp "05.txt")]
+#_(part1 almanac)
+(let [almanac (slurp "05.txt")]
   (println (part1 almanac)))
