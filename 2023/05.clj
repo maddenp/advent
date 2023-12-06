@@ -68,6 +68,6 @@
         maps (into {} (map block->map (rest blocks)))]
     (apply min (for [seed seeds] (path maps :seed seed)))))
 
-#_(part1 almanac)
-(let [almanac (slurp "05.txt")]
+(println (part1 almanac))
+#_(let [almanac (slurp "05.txt")]
   (println (part1 almanac)))
