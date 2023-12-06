@@ -36,21 +36,21 @@
            "60 56 37"
            "56 93 4"]))
 
-(defn strs->ints
+(defn strs->nums
   [strs]
    (map #(Long/parseLong %) (s/split strs #"\s+")))
 
-(defn strs->range
+(defn strs->incl
   [strs]
-  (let [[dst src n] (strs->ints strs)
-        f #(range % (+ % n))]
-    (zipmap (f src) (f dst))))
+  (let [[dst src n] (strs->nums strs)]
+    (fn [s] (when (<= src s (dec (+ src n))) (+ dst (- s src)))))) ; PM use #()
 
 (defn block->map [block]
   (let [lines (s/split block #"\n")
-        [_ src dst] (re-matches #"^([^-]+)-to-([^\s]+).*$" (first lines))
-        ranges (map strs->range (rest lines))]
-    {(keyword src) {:to (keyword dst) :corr (apply merge ranges)}}))
+        [_ cat1 cat2] (re-matches #"^([^-]+)-to-([^\s]+).*$" (first lines))
+        incls (map strs->incl (rest lines))
+        f (fn [s] (first (filter identity (conj (mapv #(% s) incls) s))))] ; PM simplify
+    {(keyword cat1) {:to (keyword cat2) :corr f}}))
 
 (defn path
   [maps key n]
@@ -58,16 +58,17 @@
     (if (= :location key)
       n
       (let [next-key (:to map)
-            next-n (get (:corr map) n n)]
+            next-n ((:corr map) n)]
         (path maps next-key next-n)))))
 
 (defn part1
   [almanac]
   (let [blocks (s/split almanac #"(?s)\n\n")
-        seeds (strs->ints (last (s/split (first blocks) #": ")))
+        seeds (strs->nums (last (s/split (first blocks) #": ")))
         maps (into {} (map block->map (rest blocks)))]
+    #_(path maps :seed 79)
     (apply min (for [seed seeds] (path maps :seed seed)))))
 
-(println (part1 almanac))
-#_(let [almanac (slurp "05.txt")]
+#_(println (part1 almanac))
+(let [almanac (slurp "05.txt")]
   (println (part1 almanac)))
