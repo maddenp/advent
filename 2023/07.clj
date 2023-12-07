@@ -14,26 +14,26 @@
     (s (vec (sort (vals (frequencies hand)))))))
 
 (defn quantify
-  [hand]
-  (let [cards [\2 \3 \4 \5 \6 \7 \8 \9 \T \J \Q \K \A]]
-    (mapv #((zipmap cards (range 2 (+ 2 (count cards)))) %) hand)))
+  [hand cards]
+  (mapv #((zipmap cards (range 2 (+ 2 (count cards)))) %) hand))
 
 (defn handcomp
   [h1 h2]
   (let [s1 (:strength h1) s2 (:strength h2)]
     (if (= s1 s2)
-      (compare (:cards h1) (:cards h2))
+      (compare (:hand h1) (:hand h2))
       (compare s1 s2))))
 
 (defn part1
   [hands]
-  (as-> (s/split hands #"\n") $
-    (map #(s/split % #" ") $)
-    (map (fn [[hand bid]] {:strength (strength hand) :cards (quantify hand) :bid (s->i bid)}) $)
-    (sort handcomp $)
-    (map vector (map #(:bid %) $) (range 1 (inc (count $))))
-    (map #(apply * %) $)
-    (apply + $)))
+  (let [cards [\2 \3 \4 \5 \6 \7 \8 \9 \T \J \Q \K \A]]
+    (as-> (s/split hands #"\n") $
+      (map #(s/split % #" ") $)
+      (map (fn [[hand bid]] {:strength (strength hand) :hand (quantify hand cards) :bid (s->i bid)}) $)
+      (sort handcomp $)
+      (map vector (map #(:bid %) $) (range 1 (inc (count $))))
+      (map #(apply * %) $)
+      (apply + $))))
 
 (let [input (slurp "07.txt")]
   (println (part1 input)))
