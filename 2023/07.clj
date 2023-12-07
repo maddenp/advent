@@ -48,14 +48,9 @@
 
 (defn part1
   [hands]
-  (let [cards [\2 \3 \4 \5 \6 \7 \8 \9 \T \J \Q \K \A]]
-    (as-> (s/split hands #"\n") $
-      (map #(s/split % #" ") $)
-      (map #(augment cards (first %) (last %) strength) $)
-      (sort handcomp $)
-      (map vector (map #(:bid %) $) (range 1 (inc (count $))))
-      (map #(apply * %) $)
-      (apply + $))))
+  (let [cards [\2 \3 \4 \5 \6 \7 \8 \9 \T \J \Q \K \A]
+        strength-fn strength]
+    (common hands cards strength-fn)))
 
 (let [input (slurp "07.txt")]
   (println (part1 input) (part2 input)))
