@@ -8,11 +8,10 @@
 
 (defn best
   [cards hand]
-  (let [njs ((frequencies hand) \J 0)
-        x (apply cartesian-product (repeat njs cards))]
-    (->>  (map #(apply format (s/replace hand #"J" "%s") %) x)
-          (map strength)
-          (apply max))))
+  (->> (apply cartesian-product (repeat ((frequencies hand) \J 0) cards))
+       (map #(apply format (s/replace hand #"J" "%s") %))
+       (map strength)
+       (apply max)))
 
 (defn quantify
   [cards hand]
