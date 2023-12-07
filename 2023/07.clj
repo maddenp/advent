@@ -6,8 +6,6 @@
                          "KTJJT 220"
                          "QQQJA 483"]))
 
-(defn s->i [s] (Long/parseLong s))
-
 (defn strength
   [hand]
   (let [s {[5] 7 [1 4] 6 [2 3] 5 [1 1 3] 4 [1 2 2] 3 [1 1 1 2] 2 [1 1 1 1] 1}]
@@ -17,16 +15,18 @@
   [cards hand]
   (mapv #((zipmap cards (range 2 (+ 2 (count cards)))) %) hand))
 
+(defn s->i [s] (Long/parseLong s))
+
+(defn augment
+  [cards hand bid]
+  {:strength (strength hand) :hand (quantify cards hand) :bid (s->i bid)})
+
 (defn handcomp
   [h1 h2]
   (let [s1 (:strength h1) s2 (:strength h2)]
     (if (= s1 s2)
       (compare (:hand h1) (:hand h2))
       (compare s1 s2))))
-
-(defn augment
-  [cards hand bid]
-  {:strength (strength hand) :hand (quantify cards hand) :bid (s->i bid)})
 
 (defn part2
   [hands]
