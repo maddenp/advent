@@ -9,16 +9,32 @@
 
 (defn strength
   [hand]
-  (let [s {[5] 7 [1 4] 6 [2 3] 5 [1 1 3] 4 [1 2 2] 3 [1 1 1 2] 2 [1 1 1 1] 1}]
+  (let [s {[5] 7 [1 4] 6 [2 3] 5 [1 1 3] 4 [1 2 2] 3 [1 1 1 2] 2 [1 1 1 1 1] 1}]
     (s (vec (sort (vals (frequencies hand)))))))
 
-(defn best
+#_(defn best
   [cards hand]
   (->> (repeat ((frequencies hand) \J 0) cards)
        (apply cartesian-product)
        (map #(apply format (s/replace hand #"J" "%s") %))
        (map strength)
        (apply max)))
+
+(defn best
+  [cards hand]
+  #_(println "@@@" hand)
+  (let [njs ((frequencies hand) \J 0)
+;;         x (if (= 1 njs) cards (apply cartesian-product (repeat njs cards)))
+        x (apply cartesian-product (repeat njs cards))
+        ]
+    #_(println "@@@" x (s/replace hand #"J" "%s"))
+    (as-> (s/replace hand #"J" "%s") $
+      (map #(apply format $ %) x)
+      (map strength $)
+      (apply max $)
+      #_(if (= 1 (count $)) $ (apply max $)))))
+
+#_(best [\2 \3 \4 \5 \6 \7 \8 \9 \T \Q \K \A] "J784T")
 
 (defn quantify
   [cards hand]
@@ -63,5 +79,5 @@
       (map #(apply * %) $)
       (apply + $))))
 
-(let [input input #_(slurp "07.txt")]
+(let [input #_input (slurp "07.txt")]
   (println #_(part1 input) (part2 input)))
