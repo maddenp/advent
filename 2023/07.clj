@@ -14,7 +14,7 @@
     (s (vec (sort (vals (frequencies hand)))))))
 
 (defn quantify
-  [hand cards]
+  [cards hand]
   (mapv #((zipmap cards (range 2 (+ 2 (count cards)))) %) hand))
 
 (defn handcomp
@@ -24,12 +24,27 @@
       (compare (:hand h1) (:hand h2))
       (compare s1 s2))))
 
+(defn augment
+  [cards hand bid]
+  {:strength (strength hand) :hand (quantify cards hand) :bid (s->i bid)})
+
+(defn part2
+  [hands]
+  (let [cards [\J \2 \3 \4 \5 \6 \7 \8 \9 \T \Q \K \A]]
+    (as-> (s/split hands #"\n") $
+      (map #(s/split % #" ") $)
+      (map #(augment cards (first %) (last %)) $)
+      (sort handcomp $)
+      (map vector (map #(:bid %) $) (range 1 (inc (count $))))
+      (map #(apply * %) $)
+      (apply + $))))
+
 (defn part1
   [hands]
   (let [cards [\2 \3 \4 \5 \6 \7 \8 \9 \T \J \Q \K \A]]
     (as-> (s/split hands #"\n") $
       (map #(s/split % #" ") $)
-      (map (fn [[hand bid]] {:strength (strength hand) :hand (quantify hand cards) :bid (s->i bid)}) $)
+      (map #(augment cards (first %) (last %)) $)
       (sort handcomp $)
       (map vector (map #(:bid %) $) (range 1 (inc (count $))))
       (map #(apply * %) $)
