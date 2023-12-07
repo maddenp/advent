@@ -19,11 +19,7 @@
   [cards hand]
   (mapv #((zipmap cards (range (count cards))) %) hand))
 
-(defn augment1
-  [cards hand bid strength-fn]
-  {:strength (strength-fn hand) :hand (quantify cards hand) :bid (s->i bid)})
-
-(defn augment2
+(defn augment
   [cards hand bid strength-fn]
   {:strength (strength-fn hand) :hand (quantify cards hand) :bid (s->i bid)})
 
@@ -39,7 +35,7 @@
   (let [cards [\J \2 \3 \4 \5 \6 \7 \8 \9 \T \Q \K \A]]
     (as-> (s/split hands #"\n") $
       (map #(s/split % #" ") $)
-      (map #(augment2 cards (first %) (last %) (partial best (rest cards))) $)
+      (map #(augment cards (first %) (last %) (partial best (rest cards))) $)
       (sort handcomp $)
       (map vector (map #(:bid %) $) (range 1 (inc (count $))))
       (map #(apply * %) $)
@@ -50,7 +46,7 @@
   (let [cards [\2 \3 \4 \5 \6 \7 \8 \9 \T \J \Q \K \A]]
     (as-> (s/split hands #"\n") $
       (map #(s/split % #" ") $)
-      (map #(augment1 cards (first %) (last %) strength) $)
+      (map #(augment cards (first %) (last %) strength) $)
       (sort handcomp $)
       (map vector (map #(:bid %) $) (range 1 (inc (count $))))
       (map #(apply * %) $)
