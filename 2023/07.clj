@@ -40,17 +40,15 @@
     (map #(apply * %) $)
     (apply + $)))
 
-(defn part2
-  [hands]
-  (let [cards [\J \2 \3 \4 \5 \6 \7 \8 \9 \T \Q \K \A]
-        strength-fn (partial best (rest cards))]
-    (common hands cards strength-fn)))
-
 (defn part1
   [hands]
-  (let [cards [\2 \3 \4 \5 \6 \7 \8 \9 \T \J \Q \K \A]
-        strength-fn strength]
-    (common hands cards strength-fn)))
+  (let [cards [\2 \3 \4 \5 \6 \7 \8 \9 \T \J \Q \K \A]]
+    (common hands cards strength)))
+
+(defn part2
+  [hands]
+  (let [cards [\J \2 \3 \4 \5 \6 \7 \8 \9 \T \Q \K \A]]
+    (common hands cards (partial best (rest cards)))))
 
 (let [input (slurp "07.txt")]
   (println (part1 input) (part2 input)))
