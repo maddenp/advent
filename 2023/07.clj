@@ -16,14 +16,24 @@
 (defn quantify
   [hand]
   (let [cards [\2 \3 \4 \5 \6 \7 \8 \9 \T \J \Q \K \A]]
-    (map #((zipmap cards (range 2 (+ 2 (count cards)))) %) hand)))
+    (mapv #((zipmap cards (range 2 (+ 2 (count cards)))) %) hand)))
 
-(as-> (s/split hands #"\n") $
-  (map #(s/split % #" ") $)
-  (map (fn [[hand bid]] [(quantify hand) (s->i bid)]) $)
-  )
+(defn handcomp
+  [h1 h2]
+  (let [s1 (:strength h1) s2 (:strength h2)]
+    (if (= s1 s2)
+      (compare (:cards h1) (:cards h2))
+      (compare s1 s2))))
 
-(defn handnum
-  [hand]
-  
-(sort '(3 2 10 3 13) '(10 5 5 11 5))
+(defn part1
+  [hands]
+  (as-> (s/split hands #"\n") $
+    (map #(s/split % #" ") $)
+    (map (fn [[hand bid]] {:strength (strength hand) :cards (quantify hand) :bid (s->i bid)}) $)
+    (sort handcomp $)
+    (map vector (map #(:bid %) $) (range 1 (inc (count $))))
+    (map #(apply * %) $)
+    (apply + $)))
+
+(let [input (slurp "07.txt")]
+  (println (part1 input)))
