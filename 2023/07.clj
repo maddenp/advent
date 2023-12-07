@@ -1,6 +1,8 @@
 (require '[clojure.math.combinatorics :refer [cartesian-product]]
          '[clojure.string :as s])
 
+(defn s->i [s] (Long/parseLong s))
+
 (defn strength
   [hand]
   (let [s {[5] 7 [1 4] 6 [2 3] 5 [1 1 3] 4 [1 2 2] 3 [1 1 1 2] 2 [1 1 1 1 1] 1}]
@@ -15,9 +17,7 @@
 
 (defn quantify
   [cards hand]
-  (mapv #((zipmap cards (range 2 (+ 2 (count cards)))) %) hand))
-
-(defn s->i [s] (Long/parseLong s))
+  (mapv #((zipmap cards (range (count cards))) %) hand))
 
 (defn augment1
   [cards hand bid]
