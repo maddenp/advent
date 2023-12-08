@@ -34,7 +34,7 @@
         maps (into {} (map block->map (rest blocks)))
         seed-range (fn [[start n]] (range start (+ start n)))
         seeds (flatten (map seed-range (partition 2 (strs->nums (last (s/split (first blocks) #": "))))))]
-    (reduce min (for [seed seeds] (path maps :seed seed)))))
+    (reduce (fn [m e] (min m (path maps :seed e))) seeds)))
 
 (let [almanac (slurp "05.txt")]
   (println (part1 almanac) #_(part2 almanac)))
