@@ -17,11 +17,20 @@
 
 (defn part1
   [input]
-  (let [[lr nodes] (prep input) m (count lr)]
+  (let [[lr nodes] (prep input)]
     (loop [n 0 x "AAA"]
       (if (= x "ZZZ")
         n
-        (recur (inc n) ((nodes x) (nth lr (mod n m))))))))
+        (recur (inc n) ((nodes x) (nth lr (mod n (count lr)))))))))
+
+(defn part2
+  [input]
+  (let [[lr nodes] (prep input)]
+    (loop [n 0 xs (filter #(s/ends-with? % "A") (keys nodes))]
+      (if (every? #(s/ends-with? % "Z") xs)
+        n
+        (recur (inc n) (let [d (nth lr (mod n (count lr)))] (vec (map (fn [x] ((nodes x) d)) xs))))
+        ))))
 
 (def input2 (s/join "\n" ["LR"
                           ""
@@ -33,6 +42,10 @@
                           "22C = (22Z, 22Z)"
                           "22Z = (22B, 22B)"
                           "XXX = (XXX, XXX)"]))
+
+(let [input #_input2 (slurp "08.txt")]
+    (println (part2 input))
+    #_(println (part1 input1) (part2 input2)))
 
 (defn z? [s] (s/ends-with? s "Z"))
 
@@ -54,5 +67,5 @@
             zs (filter #(z? (first %)) cycle)]
         (map #(vector cyclelen (last %)) zs)))))
 
-(let [[lr nodes] (prep input2 #_(slurp "08.txt"))]
+#_(let [[lr nodes] (prep input2 #_(slurp "08.txt"))]
   (println (get-params lr nodes)))
