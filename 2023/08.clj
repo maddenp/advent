@@ -34,8 +34,6 @@
                           "22Z = (22B, 22B)"
                           "XXX = (XXX, XXX)"]))
 
-;; (filter #(s/ends-with? % "A") (keys nodes))]
-
 (defn z? [s] (s/ends-with? s "Z"))
 
 (defn get-cycle
