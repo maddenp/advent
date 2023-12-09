@@ -32,9 +32,9 @@
         (recur (inc n) (let [i (nth lr (mod n m))] (vec (map (fn [x] ((nodes x) i)) xs))))
         ))))
 
-(let [input (slurp "08.txt")]
-  (println (part2 input))
-  #_(println (part1 input1) (part2 input2)))
+#_(let [input (slurp "08.txt")]
+    (println (part2 input))
+    #_(println (part1 input1) (part2 input2)))
 
 (def input2 (s/join "\n" ["LR"
                           ""
@@ -47,11 +47,25 @@
                           "22Z = (22B, 22B)"
                           "XXX = (XXX, XXX)"]))
 
-#_(let [[lr nodes] (prep #_input2 (slurp "08.txt"))
-      next (fn [x n] ((nodes x) (nth lr (mod n (count lr)))))
-      xs (filter #(s/ends-with? % "A") (keys nodes))]
-  (loop [x "GFA" n 0 foo [] seen #{}]
-    (println "@@@" x)
-    (if (s/ends-with? x "Z")
-      (do (println "***" x n foo) n)
-      (recur (next x n) (inc n) (conj foo x) (conj seen x)))))
+;;       xs (filter #(s/ends-with? % "A") (keys nodes))]
+
+(defn get-cycle
+  [lr nodes start]
+  (let [z? #(s/ends-with? % "Z")
+        m #(mod % (count lr))
+        next (fn [x n] ((nodes x) (nth lr (m n))))]
+    (loop [x start n 0 path [] seen #{}]
+      (if (seen [x (m n)])
+        path ; (println (filter (fn [[k v]] (z? k)) seen))
+        (recur (next x n) (inc n) (conj path [x n]) (conj seen [x (m n)]))))))
+
+(let [[lr nodes] (prep input2 #_(slurp "08.txt"))]
+  (println (get-cycle lr nodes "22A")))
+  ;;       z? #(s/ends-with? % "Z")
+  ;;       m #(mod % (count lr))
+  ;;       next (fn [x n] ((nodes x) (nth lr (m n))))]
+  ;;   (loop [x "11A" n 0 path [] seen #{}]
+  ;;     (println "@@@" n x (m n) path)
+  ;;     (if (seen [x (m n)])
+  ;;       (println (filter (fn [[k v]] (z? k)) seen))
+  ;;       (recur (next x n) (inc n) (conj path [x n]) (conj seen [x (m n)])))))
