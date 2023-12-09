@@ -49,23 +49,18 @@
 
 ;;       xs (filter #(s/ends-with? % "A") (keys nodes))]
 
+(defn z? [s] (s/ends-with? s "Z"))
+
 (defn get-cycle
   [lr nodes start]
-  (let [z? #(s/ends-with? % "Z")
-        m #(mod % (count lr))
+  (let [m #(mod % (count lr))
         next (fn [x n] ((nodes x) (nth lr (m n))))]
     (loop [x start n 0 path [] seen #{}]
       (if (seen [x (m n)])
-        path ; (println (filter (fn [[k v]] (z? k)) seen))
+        path
         (recur (next x n) (inc n) (conj path [x n]) (conj seen [x (m n)]))))))
 
-(let [[lr nodes] (prep input2 #_(slurp "08.txt"))]
-  (println (get-cycle lr nodes "22A")))
-  ;;       z? #(s/ends-with? % "Z")
-  ;;       m #(mod % (count lr))
-  ;;       next (fn [x n] ((nodes x) (nth lr (m n))))]
-  ;;   (loop [x "11A" n 0 path [] seen #{}]
-  ;;     (println "@@@" n x (m n) path)
-  ;;     (if (seen [x (m n)])
-  ;;       (println (filter (fn [[k v]] (z? k)) seen))
-  ;;       (recur (next x n) (inc n) (conj path [x n]) (conj seen [x (m n)])))))
+(let [[lr nodes] (prep input2 #_(slurp "08.txt"))
+      cycle (get-cycle lr nodes "11A")
+      a (last (last cycle))]
+  (println (map #(vector a (last %)) (filter #(z? (first %)) cycle))))
