@@ -47,8 +47,14 @@
         path
         (recur (next x n) (inc n) (conj path [x n]) (conj seen [x (pos n)]))))))
 
-(let [[lr nodes] (prep input2 #_(slurp "08.txt"))
-      xs (filter #(s/ends-with? % "A") (keys nodes))
-      cycles (map #(get-cycle lr nodes %) xs)]
-  (doseq [cycle cycles]
-    (println (map #(vector (last (last cycle)) (last %)) (filter #(z? (first %)) cycle)))))
+(defn get-params
+  [lr nodes]
+  (let [xs (filter #(s/ends-with? % "A") (keys nodes))
+        cycles (map #(get-cycle lr nodes %) xs)]
+    (for [cycle cycles]
+      (let [cyclelen (last (last cycle))
+            zs (filter #(z? (first %)) cycle)]
+        (map #(vector cyclelen (last %)) zs)))))
+
+(let [[lr nodes] (prep input2 #_(slurp "08.txt"))]
+  (println (get-params lr nodes)))
