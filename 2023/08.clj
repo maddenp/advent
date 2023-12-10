@@ -2,7 +2,6 @@
 
 (defn gcd [a b] (if (zero? b) a (recur b (mod a b))))
 (defn lcm [a b] (/ (* a b) (gcd a b)))
-(defn z? [s] (s/ends-with? s "Z"))
 
 (defn prep
   [input]
@@ -31,9 +30,9 @@
 
 (defn part2
   [lr nodes]
-  (let [xs (filter #(s/ends-with? % "A") (keys nodes))
-        cycles (map #(get-cycle lr nodes %) xs)
-        lengths (map (fn [cycle] (last (first (filter #(z? (first %)) cycle)))) cycles)]
+  (let [a-nodes (filter #(s/ends-with? % "A") (keys nodes))
+        cycles (map #(get-cycle lr nodes %) a-nodes)
+        lengths (map (fn [cycle] (last (first (filter #(s/ends-with? (first %) "Z") cycle)))) cycles)]
     (reduce lcm lengths)))
 
 (let [[lr nodes] (prep (slurp "08.txt"))]
