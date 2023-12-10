@@ -30,10 +30,11 @@
 
 (defn part2
   [lr nodes]
-  (let [a-nodes (filter #(s/ends-with? % "A") (keys nodes))
-        cycles (map #(get-cycle lr nodes %) a-nodes)
-        lengths (map (fn [cycle] (last (first (filter #(s/ends-with? (first %) "Z") cycle)))) cycles)]
-    (reduce lcm lengths)))
+  (let [z? #(s/ends-with? (first %) "Z")]
+    (->> (filter #(s/ends-with? % "A") (keys nodes))
+         (map #(get-cycle lr nodes %))
+         (map (fn [cycle] (last (first (filter z? cycle)))))
+         (reduce lcm))))
 
 (let [[lr nodes] (prep (slurp "08.txt"))]
     (println (part1 lr nodes) (part2 lr nodes)))
