@@ -38,24 +38,5 @@
       lengths (map (fn [cycle] (last (first (filter #(z? (first %)) cycle)))) cycles)]
   (reduce lcm lengths)))
 
-(let [input #_input2 (slurp "08.txt")]
-    (println (part2 input))
-    #_(println (part1 input1) (part2 input2)))
-
-#_(defn get-params
-  [lr nodes]
-  (let [xs (filter #(s/ends-with? % "A") (keys nodes))
-        cycles (map #(get-cycle lr nodes %) xs)]
-    (for [cycle cycles]
-      (let [cyclelen (last (last cycle))
-            zs (filter #(z? (first %)) cycle)]
-        (map #(vector cyclelen (last %)) zs)))))
-
-#_(let [[lr nodes] (prep input2 #_(slurp "08.txt"))]
-  (println (get-params lr nodes)))
-;;   (let [pos #(mod % (count lr))
-;;         next (fn [x n] ((nodes x) (nth lr (pos n))))]
-;;     (loop [x "SVA" n 0 z0 0 z1 0]
-;;       (when (z? x) (println "@@@" x n (- z1 z0)))
-;;       (recur (next x n) (inc n) (if (z? x) z1 z0) (if (z? x) n z1)))))
-
+(let [input (slurp "08.txt")]
+    (println (part1 input) (part2 input)))
