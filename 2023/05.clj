@@ -12,7 +12,7 @@
 (defn strs->range
   [strs]
   (let [[dst src n] (strs->nums strs)]
-    {:start src :end (- (+ src n) 1) :incr (- dst src)}))
+    {:lb src :ub (- (+ src n) 1) :d (- dst src)}))
 
 (defn category->map [category]
   (let [lines (s/split category #"\n")
@@ -33,16 +33,45 @@
 
 (require '[clojure.pprint :refer [pprint]])
 
+(defn overlap?
+  [range1 range2]
+  (not (or (< (:ub range1) (:lb range2)) (> (:lb range1) (:ub range2)))))
+
+(defn update
+  [range1 range2]
+  (let [lb1 (:lb range1) ub1 (:ub range1) lb2 (:lb range2) ub2 (:ub range2) d (:d range2)]
+    (if (overlap? range1 range2)
+      (cond
+        (and (<= lb2 lb1) (< lb1 ub2 ub1))
+        [{:lb (+ d lb1) :ub (+ d ub2)} {:lb (inc ub2) :ub ub1}]
+        (and (> lb2 lb1) (< ub2 ub1))
+        [{:lb lb1 :ub (dec lb2)} {:lb (+ d lb2) :ub (+ d ub2)} {:lb (inc ub2) :ub ub1}]
+        (and (< lb1 lb2 ub1) (>= ub2 ub1))
+        [{:lb lb1 :ub (dec lb2)} {:lb (+ d lb2) :ub (+ d ub1)}]
+        :else
+        [{:lb (+ d lb1) :ub (+ d ub1)}])
+      range1)))
+    
 (defn part2
   [categories seeds]
-  (let [ranges (map (fn [[start n]] [start (- (+ start n) 1)]) (partition 2 seeds))]
-    (doseq [category categories]
-      (pprint (category->map category)))))
+  (let [maps (apply merge (map category->map categories))
+        f (fn [[start n]] {:lb start :ub (- (+ start n) 1)})
+        ranges (map f (partition 2 seeds))]
+    (loop [ranges ranges x :seed]
+      (println "@@@ current" ranges)
+      (if (= x :soil) ; :location
+        8888
+        (let [m (maps x)]
+          (do 
+            (doseq [r1 ranges]
+              (doseq [r2 (m :ranges)]
+                (println "***" r1 "vs" r2 "=>" (update r1 r2))))
+            (recur (m :ranges) (m :to))))))))
 
-(let [blocks (s/split #_almanac (slurp "05.txt") #"(?s)\n\n")
+(let [blocks (s/split almanac #_(slurp "05.txt") #"(?s)\n\n")
       seeds (strs->nums (last (s/split (first blocks) #": ")))
       categories (rest blocks)]
-  (println (part1 categories seeds) #_(part2 categories seeds)))
+  (println #_(part1 categories seeds) (part2 categories seeds)))
 
 (comment
   (def almanac
