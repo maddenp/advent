@@ -13,14 +13,6 @@
       (apply merge $)
       [lr $])))
 
-(defn part1
-  [input]
-  (let [[lr nodes] (prep input)]
-    (loop [n 0 x "AAA"]
-      (if (= x "ZZZ")
-        n
-        (recur (inc n) ((nodes x) (nth lr (mod n (count lr)))))))))
-
 (defn get-cycle
   [lr nodes start]
   (let [pos #(mod % (count lr))
@@ -30,13 +22,19 @@
         path
         (recur (next x n) (inc n) (conj path [x n]) (conj seen [x (pos n)]))))))
 
-(defn part2
-  [input]
-  (let [[lr nodes] (prep input)
-      xs (filter #(s/ends-with? % "A") (keys nodes))
-      cycles (map #(get-cycle lr nodes %) xs)
-      lengths (map (fn [cycle] (last (first (filter #(z? (first %)) cycle)))) cycles)]
-  (reduce lcm lengths)))
+(defn part1
+  [lr nodes]
+  (loop [n 0 x "AAA"]
+    (if (= x "ZZZ")
+      n
+      (recur (inc n) ((nodes x) (nth lr (mod n (count lr))))))))
 
-(let [input (slurp "08.txt")]
-    (println (part1 input) (part2 input)))
+(defn part2
+  [lr nodes]
+  (let [xs (filter #(s/ends-with? % "A") (keys nodes))
+        cycles (map #(get-cycle lr nodes %) xs)
+        lengths (map (fn [cycle] (last (first (filter #(z? (first %)) cycle)))) cycles)]
+    (reduce lcm lengths)))
+
+(let [[lr nodes] (prep (slurp "08.txt"))]
+    (println (part1 lr nodes) (part2 lr nodes)))
