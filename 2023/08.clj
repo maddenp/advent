@@ -23,7 +23,7 @@
         n
         (recur (inc n) ((nodes x) (nth lr (mod n (count lr)))))))))
 
-(defn part2
+#_(defn part2
   [input]
   (let [[lr nodes] (prep input)]
     (loop [n 0 xs (filter #(s/ends-with? % "A") (keys nodes))]
@@ -43,7 +43,7 @@
                           "22Z = (22B, 22B)"
                           "XXX = (XXX, XXX)"]))
 
-(let [input #_input2 (slurp "08.txt")]
+#_(let [input #_input2 (slurp "08.txt")]
     (println (part2 input))
     #_(println (part1 input1) (part2 input2)))
 
@@ -58,7 +58,7 @@
         path
         (recur (next x n) (inc n) (conj path [x n]) (conj seen [x (pos n)]))))))
 
-(defn get-params
+#_(defn get-params
   [lr nodes]
   (let [xs (filter #(s/ends-with? % "A") (keys nodes))
         cycles (map #(get-cycle lr nodes %) xs)]
@@ -69,3 +69,18 @@
 
 #_(let [[lr nodes] (prep input2 #_(slurp "08.txt"))]
   (println (get-params lr nodes)))
+
+(defn gcd [a b] (if (zero? b) a (recur b (mod a b))))
+(defn lcm [a b] (/ (* a b) (gcd a b)))
+
+(let [[lr nodes] (prep (slurp "08.txt"))
+      xs (filter #(s/ends-with? % "A") (keys nodes))
+      cycles (map #(get-cycle lr nodes %) xs)
+      lengths (map (fn [cycle] (last (first (filter #(z? (first %)) cycle)))) cycles)]
+  (println (reduce lcm lengths)))
+;;   (let [pos #(mod % (count lr))
+;;         next (fn [x n] ((nodes x) (nth lr (pos n))))]
+;;     (loop [x "SVA" n 0 z0 0 z1 0]
+;;       (when (z? x) (println "@@@" x n (- z1 z0)))
+;;       (recur (next x n) (inc n) (if (z? x) z1 z0) (if (z? x) n z1)))))
+
