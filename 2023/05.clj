@@ -73,8 +73,8 @@
   (let [maps (apply merge (map category->map categories))
         ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
     (loop [ranges ranges x :seed]
-      (println x "000" "ranges" ranges "adjs" ((maps x) :ranges))
-      (if (= x :water)
+      (println "000" x "ranges" ranges "adjs" ((maps x) :ranges))
+      (if (= x :temperature)
         888
         (let [{o :old n :new}
               (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
