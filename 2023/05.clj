@@ -74,7 +74,7 @@
         ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
     (loop [ranges ranges x :seed]
       (println "000" x "ranges" ranges "adjs" ((maps x) :ranges))
-      (if (= x :temperature)
+      (if (= x :location)
         888
         (let [{o :old n :new}
               (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
