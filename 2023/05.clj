@@ -74,12 +74,13 @@
   (let [maps (apply merge (map category->map categories))
         ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
     (loop [ranges ranges x :seed]
+      (println "000" "ranges" ranges "x" x)
       (if (= x :soil)
         888
         (let [{o :old n :new}
               (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
               (if-let [a (first adjs)]
-                (do (println "@@@" "adjs" adjs "old-outer" old-outer "new-outer" new-outer)
+                (do (println "111" adjs "old-outer" old-outer "new-outer" new-outer)
                     (let [{o :old n :new}
                           (loop [rs old-outer old-inner [] new-inner []]
                             (if-let [r (first rs)]
@@ -95,7 +96,7 @@
                               {:old old-inner :new new-inner}))]
                       (recur (rest adjs) o (apply conj new-outer n))))
                 {:old old-outer :new new-outer})))]
-          (recur [] :soil))))))
+          (recur [] ((maps x) :to)))))))
 
 ;; (defn part2
 ;;     [categories seeds]
