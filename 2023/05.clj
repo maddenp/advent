@@ -74,28 +74,30 @@
         ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
     (loop [ranges ranges x :seed]
       (println "000" x "ranges" ranges "adjs" ((maps x) :ranges))
-      (if (= x :location)
-        888
+      (if (not= x :humidity)
         (let [{o :old n :new}
               (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
-                    (if-let [a (first adjs)]
-                      (do (println "111" adjs "old-outer" old-outer "new-outer" new-outer)
-                          (let [{o :old n :new}
-                                (loop [rs old-outer old-inner [] new-inner []]
-                                  (if-let [r (first rs)]
-                                    (do (println "rs" rs
-                                                 "old-inner" old-inner
-                                                 "new-inner" new-inner)
-                                        (let [{o :old n :new}
-                                              (update r a)]
-                                          (println "a"  a "r" r "o" o "n" n)
-                                          (recur (rest rs)
-                                                 (apply conj old-inner o)
-                                                 (apply conj new-inner n))))
-                                    {:old old-inner :new new-inner}))]
-                            (recur (rest adjs) o (apply conj new-outer n))))
+                    (if (seq adjs)
+                      (let [a (first adjs)]
+                        (do (println "111" adjs "old-outer" old-outer "new-outer" new-outer)
+                            (let [{o :old n :new}
+                                  (loop [rs old-outer old-inner [] new-inner []]
+                                    (if (seq rs)
+                                      (let [r (first rs)]
+                                        (do (println "rs" rs
+                                                     "old-inner" old-inner
+                                                     "new-inner" new-inner)
+                                            (let [{o :old n :new}
+                                                  (update r a)]
+                                              (println "a"  a "r" r "o" o "n" n)
+                                              (recur (rest rs)
+                                                     (apply conj old-inner o)
+                                                     (apply conj new-inner n)))))
+                                      {:old old-inner :new new-inner}))]
+                              (recur (rest adjs) o (apply conj new-outer n)))))
                       {:old old-outer :new new-outer})))]
-          (recur (apply conj o n) ((maps x) :to)))))))
+          (recur (apply conj o n) ((maps x) :to)))
+        888))))
 
 ;; (defn part2
 ;;     [categories seeds]
