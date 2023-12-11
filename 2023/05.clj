@@ -96,7 +96,7 @@
                               {:old old-inner :new new-inner}))]
                       (recur (rest adjs) o (apply conj new-outer n))))
                 {:old old-outer :new new-outer})))]
-          (recur [] ((maps x) :to)))))))
+          (recur (apply conj o n) ((maps x) :to)))))))
 
 ;; (defn part2
 ;;     [categories seeds]
