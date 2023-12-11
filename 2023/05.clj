@@ -1,4 +1,5 @@
-(require '[clojure.string :as s])
+(require '[clojure.math.combinatorics :refer [cartesian-product]]
+         '[clojure.string :as s])
 
 (defn strs->nums
   [strs]
@@ -39,18 +40,22 @@
 
 (defn update
   [range1 range2]
+  (println ">>> inp" range1 "vs" range2)
   (let [lb1 (:lb range1) ub1 (:ub range1) lb2 (:lb range2) ub2 (:ub range2) d (:d range2)]
+    (let [res
     (if (overlap? range1 range2)
       (cond
         (and (<= lb2 lb1) (< lb1 ub2 ub1))
-        [{:lb (+ d lb1) :ub (+ d ub2)} {:lb (inc ub2) :ub ub1}]
+        {:old [{:lb (inc ub2) :ub ub1}] :new [{:lb (+ d lb1) :ub (+ d ub2)}]}
         (and (> lb2 lb1) (< ub2 ub1))
-        [{:lb lb1 :ub (dec lb2)} {:lb (+ d lb2) :ub (+ d ub2)} {:lb (inc ub2) :ub ub1}]
+        {:old [{:lb lb1 :ub (dec lb2)} {:lb (inc ub2) :ub ub1}] :new [{:lb (+ d lb2) :ub (+ d ub2)}]}
         (and (< lb1 lb2 ub1) (>= ub2 ub1))
-        [{:lb lb1 :ub (dec lb2)} {:lb (+ d lb2) :ub (+ d ub1)}]
+        {:old [{:lb lb1 :ub (dec lb2)}] :new [{:lb (+ d lb2) :ub (+ d ub1)}]}
         :else
-        [{:lb (+ d lb1) :ub (+ d ub1)}])
-      range1)))
+        {:old [] :new [{:lb (+ d lb1) :ub (+ d ub1)}]})
+      {:old [range1] :new []})
+          ] (println ">>> out" res) res)
+          ))
     
 (defn part2
   [categories seeds]
@@ -58,15 +63,24 @@
         f (fn [[start n]] {:lb start :ub (- (+ start n) 1)})
         ranges (map f (partition 2 seeds))]
     (loop [ranges ranges x :seed]
-      (println "@@@ current" ranges)
+      (println "@@@" ranges)
       (if (= x :soil) ; :location
-        8888
-        (let [m (maps x)]
-          (do 
-            (doseq [r1 ranges]
-              (doseq [r2 (m :ranges)]
-                (println "***" r1 "vs" r2 "=>" (update r1 r2))))
-            (recur (m :ranges) (m :to))))))))
+        888
+        (do
+          (let [final (loop [adj ((maps x) :ranges) adj-old [] adj-new []]
+                        (println "--- adj" (first adj))
+                        (if (seq adj)
+                          (loop [r ranges old [] new []]
+                            (println "+++ start" "r" r "old" old "new" new) 
+                            (if (seq r)
+                              (let [res (update (first r) (first adj))]
+                                (println "+++ res old" (:old res) "res new" (:new res))
+                                (recur (rest r) (flatten (conj old (:old res))) (flatten (conj new new (:new res)))))
+                              new))
+                          (recur (rest adj) adj-old adj-new)))]
+            (println "===" final))
+          (recur ranges ((maps x) :to)))
+        ))))
 
 (let [blocks (s/split almanac #_(slurp "05.txt") #"(?s)\n\n")
       seeds (strs->nums (last (s/split (first blocks) #": ")))
