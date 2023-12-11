@@ -76,11 +76,12 @@
     (loop [ranges ranges x :seed]
       (if (= x :soil)
         888
-        (do (loop [adjs ((maps x) :ranges) ranges ranges new []]
+        (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
               (if-let [a (first adjs)]
-                (do (let [{o :old n :new} (loop [rs ranges old-inner [] new-inner []]
+                (do (println "@@@" "adjs" adjs "old-outer" old-outer "new-outer" new-outer)
+                    (let [{o :old n :new} (loop [rs old-outer old-inner [] new-inner []]
                                             (if-let [r (first rs)]
-                                              (do (println "ranges" ranges
+                                              (do (println "rs" rs
                                                            "old-inner" old-inner
                                                            "new-inner" new-inner)
                                                   (let [{o :old n :new} (update r a)]
@@ -89,9 +90,8 @@
                                                            (apply conj old-inner o)
                                                            (apply conj new-inner n))))
                                               {:old old-inner :new new-inner}))]
-                      (println "@@@" "old" o "new" n)
-                      (recur (rest adjs) o (conj new n))))
-                []))
+                      (recur (rest adjs) o (apply conj new-outer n))))
+                {:old old-outer :new new-outer}))
             (recur [] :soil))))))
 
 ;; (defn part2
