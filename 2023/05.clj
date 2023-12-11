@@ -1,5 +1,4 @@
-(require '[clojure.math.combinatorics :refer [cartesian-product]]
-         '[clojure.string :as s])
+(require '[clojure.string :as s])
 
 (defn strs->nums
   [strs]
@@ -74,28 +73,28 @@
   (let [maps (apply merge (map category->map categories))
         ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
     (loop [ranges ranges x :seed]
-      (println "000" "ranges" ranges "x" x)
+      (println "000" "ranges" ranges "x" x "adjs" ((maps x) :ranges))
       (if (= x :soil)
         888
         (let [{o :old n :new}
               (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
-              (if-let [a (first adjs)]
-                (do (println "111" adjs "old-outer" old-outer "new-outer" new-outer)
-                    (let [{o :old n :new}
-                          (loop [rs old-outer old-inner [] new-inner []]
-                            (if-let [r (first rs)]
-                              (do (println "rs" rs
-                                           "old-inner" old-inner
-                                           "new-inner" new-inner)
-                                  (let [{o :old n :new}
-                                        (update r a)]
-                                    (println "a"  a "r" r "o" o "n" n)
-                                    (recur (rest rs)
-                                           (apply conj old-inner o)
-                                           (apply conj new-inner n))))
-                              {:old old-inner :new new-inner}))]
-                      (recur (rest adjs) o (apply conj new-outer n))))
-                {:old old-outer :new new-outer})))]
+                    (if-let [a (first adjs)]
+                      (do (println "111" adjs "old-outer" old-outer "new-outer" new-outer)
+                          (let [{o :old n :new}
+                                (loop [rs old-outer old-inner [] new-inner []]
+                                  (if-let [r (first rs)]
+                                    (do (println "rs" rs
+                                                 "old-inner" old-inner
+                                                 "new-inner" new-inner)
+                                        (let [{o :old n :new}
+                                              (update r a)]
+                                          (println "a"  a "r" r "o" o "n" n)
+                                          (recur (rest rs)
+                                                 (apply conj old-inner o)
+                                                 (apply conj new-inner n))))
+                                    {:old old-inner :new new-inner}))]
+                            (recur (rest adjs) o (apply conj new-outer n))))
+                      {:old old-outer :new new-outer})))]
           (recur (apply conj o n) ((maps x) :to)))))))
 
 ;; (defn part2
