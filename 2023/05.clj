@@ -76,23 +76,26 @@
     (loop [ranges ranges x :seed]
       (if (= x :soil)
         888
-        (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
+        (let [{o :old n :new}
+              (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
               (if-let [a (first adjs)]
                 (do (println "@@@" "adjs" adjs "old-outer" old-outer "new-outer" new-outer)
-                    (let [{o :old n :new} (loop [rs old-outer old-inner [] new-inner []]
-                                            (if-let [r (first rs)]
-                                              (do (println "rs" rs
-                                                           "old-inner" old-inner
-                                                           "new-inner" new-inner)
-                                                  (let [{o :old n :new} (update r a)]
-                                                    (println "a"  a "r" r "o" o "n" n)
-                                                    (recur (rest rs)
-                                                           (apply conj old-inner o)
-                                                           (apply conj new-inner n))))
-                                              {:old old-inner :new new-inner}))]
+                    (let [{o :old n :new}
+                          (loop [rs old-outer old-inner [] new-inner []]
+                            (if-let [r (first rs)]
+                              (do (println "rs" rs
+                                           "old-inner" old-inner
+                                           "new-inner" new-inner)
+                                  (let [{o :old n :new}
+                                        (update r a)]
+                                    (println "a"  a "r" r "o" o "n" n)
+                                    (recur (rest rs)
+                                           (apply conj old-inner o)
+                                           (apply conj new-inner n))))
+                              {:old old-inner :new new-inner}))]
                       (recur (rest adjs) o (apply conj new-outer n))))
-                {:old old-outer :new new-outer}))
-            (recur [] :soil))))))
+                {:old old-outer :new new-outer})))]
+          (recur [] :soil))))))
 
 ;; (defn part2
 ;;     [categories seeds]
