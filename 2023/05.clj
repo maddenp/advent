@@ -58,10 +58,9 @@
                   (if (not= x :location)
                     (let [{o :old n :new} (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
                             (if (seq adjs)
-                              (let [a (first adjs)
-                                    {o :old n :new} (loop [rs old-outer old-inner [] new-inner []]
+                              (let [{o :old n :new} (loop [rs old-outer old-inner [] new-inner []]
                                                       (if (seq rs)
-                                                        (let [{o :old n :new} (update-range (first rs) a)]
+                                                        (let [{o :old n :new} (update-range (first rs) (first adjs))]
                                                           (recur (rest rs)
                                                                  (apply conj old-inner o)
                                                                  (apply conj new-inner n)))
