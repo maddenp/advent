@@ -37,7 +37,7 @@
   [range1 range2]
   (not (or (< (:ub range1) (:lb range2)) (> (:lb range1) (:ub range2)))))
 
-(defn update
+(defn update-range
   [r adj]
   (let [lb1 (:lb r) ub1 (:ub r) lb2 (:lb adj) ub2 (:ub adj) d (:d adj)]
     (if (overlap? r adj)
@@ -57,23 +57,17 @@
   (let [maps (apply merge (map category->map categories))
         ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
     (let [final (loop [ranges ranges x :seed]
-                  (println "@@@" ranges)
                   (if (not= x :location)
                     (let [{o :old n :new}
                           (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
                                 (if (seq adjs)
                                   (let [a (first adjs)]
-                                    (do (println "+++" adjs "old-outer" old-outer "new-outer" new-outer)
-                                        (let [{o :old n :new}
+                                    (do (let [{o :old n :new}
                                               (loop [rs old-outer old-inner [] new-inner []]
                                                 (if (seq rs)
                                                   (let [r (first rs)]
-                                                    (do (println "rs" rs
-                                                                 "old-inner" old-inner
-                                                                 "new-inner" new-inner)
-                                                        (let [{o :old n :new}
-                                                              (update r a)]
-                                                          (println "a"  a "r" r "o" o "n" n)
+                                                    (do (let [{o :old n :new}
+                                                              (update-range r a)]
                                                           (recur (rest rs)
                                                                  (apply conj old-inner o)
                                                                  (apply conj new-inner n)))))
@@ -87,7 +81,7 @@
 (let [blocks (s/split #_almanac (slurp "05.txt") #"(?s)\n\n")
       seeds (strs->nums (last (s/split (first blocks) #": ")))
       categories (rest blocks)]
-  (println #_(part1 categories seeds) (part2 categories seeds)))
+  (println (part1 categories seeds) (part2 categories seeds)))
 
 (comment
   (def almanac
