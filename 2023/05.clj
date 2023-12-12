@@ -26,13 +26,6 @@
   (let [map (key maps)]
     (if (= :location key) n (recur maps (:to map) ((:next map) n)))))
 
-(defn part1
-  [categories seeds]
-  (let [maps (into {} (map category->map categories))]
-    (reduce min (for [seed seeds] (path maps :seed seed)))))
-
-(require '[clojure.pprint :refer [pprint]])
-
 (defn overlap?
   [range1 range2]
   (not (or (< (:ub range1) (:lb range2)) (> (:lb range1) (:ub range2)))))
@@ -51,6 +44,11 @@
         :else
         {:old [] :new [{:lb (+ d lb1) :ub (+ d ub1)}]})
       {:old [r] :new []})))
+
+(defn part1
+  [categories seeds]
+  (let [maps (into {} (map category->map categories))]
+    (reduce min (for [seed seeds] (path maps :seed seed)))))
 
 (defn part2
   [categories seeds]
