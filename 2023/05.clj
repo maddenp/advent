@@ -42,11 +42,11 @@
   (let [lb1 (:lb r) ub1 (:ub r) lb2 (:lb adj) ub2 (:ub adj) d (:d adj)]
     (if (overlap? r adj)
       (cond
-        (and (< lb2 lb1) (<= lb1 ub2) (< ub2 ub1))
+        (and (<= lb2 lb1) (<= lb1 ub2) (< ub2 ub1))
         {:old [{:lb (inc ub2) :ub ub1}] :new [{:lb (+ d lb1) :ub (+ d ub2)}]}
         (< lb1 lb2 ub2 ub1)
         {:old [{:lb lb1 :ub (dec lb2)} {:lb (inc ub2) :ub ub1}] :new [{:lb (+ d lb2) :ub (+ d ub2)}]}
-        (and (< lb1 lb2) (<= lb2 ub1) (< ub1 ub2))
+        (and (< lb1 lb2) (<= lb2 ub1) (<= ub1 ub2))
         {:old [{:lb lb1 :ub (dec lb2)}] :new [{:lb (+ d lb2) :ub (+ d ub1)}]}
         :else
         {:old [] :new [{:lb (+ d lb1) :ub (+ d ub1)}]})
