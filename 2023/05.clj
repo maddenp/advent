@@ -56,19 +56,15 @@
         ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
     (let [final (loop [ranges ranges x :seed]
                   (if (not= x :location)
-                    (let [{o :old n :new}
-                          (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
+                    (let [{o :old n :new} (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
                             (if (seq adjs)
                               (let [a (first adjs)]
-                                (let [{o :old n :new}
-                                      (loop [rs old-outer old-inner [] new-inner []]
+                                (let [{o :old n :new} (loop [rs old-outer old-inner [] new-inner []]
                                         (if (seq rs)
-                                          (let [r (first rs)]
-                                            (let [{o :old n :new}
-                                                  (update-range r a)]
-                                              (recur (rest rs)
-                                                     (apply conj old-inner o)
-                                                     (apply conj new-inner n))))
+                                          (let [{o :old n :new} (update-range (first rs) a)]
+                                            (recur (rest rs)
+                                                   (apply conj old-inner o)
+                                                   (apply conj new-inner n)))
                                           {:old old-inner :new new-inner}))]
                                   (recur (rest adjs) o (apply conj new-outer n))))
                               {:old old-outer :new new-outer}))]
