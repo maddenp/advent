@@ -65,17 +65,17 @@
       (let [{o :old n :new} (adjust-one old (first adjs))]
         (recur (rest adjs) o (apply conj new n)))
       {:old old :new new})))
-  
+
 (defn part2
   [categories seeds]
   (let [maps (apply merge (map category->map categories))
-        ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
-    (let [final (loop [ranges ranges x :seed]
-                  (if (not= x :location)
-                    (let [{o :old n :new} (adjust-all maps ranges x)]
-                      (recur (apply conj o n) ((maps x) :to)))
-                    ranges))]
-      (apply min (map :lb final)))))
+        ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))
+        locations (loop [ranges ranges x :seed]
+                    (if (not= x :location)
+                      (let [{o :old n :new} (adjust-all maps ranges x)]
+                        (recur (apply conj o n) ((maps x) :to)))
+                      ranges))]
+    (apply min (map :lb locations))))
 
 (let [blocks (s/split #_almanac (slurp "05.txt") #"(?s)\n\n")
       seeds (strs->nums (last (s/split (first blocks) #": ")))
