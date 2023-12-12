@@ -26,6 +26,11 @@
   (let [map (key maps)]
     (if (= :location key) n (recur maps (:to map) ((:next map) n)))))
 
+(defn part1
+  [categories seeds]
+  (let [maps (into {} (map category->map categories))]
+    (reduce min (for [seed seeds] (path maps :seed seed)))))
+
 (defn overlap?
   [range1 range2]
   (not (or (< (:ub range1) (:lb range2)) (> (:lb range1) (:ub range2)))))
@@ -44,11 +49,6 @@
         :else
         {:old [] :new [{:lb (+ d lb1) :ub (+ d ub1)}]})
       {:old [r] :new []})))
-
-(defn part1
-  [categories seeds]
-  (let [maps (into {} (map category->map categories))]
-    (reduce min (for [seed seeds] (path maps :seed seed)))))
 
 (defn adjust-one
   [ranges adj]
@@ -73,21 +73,6 @@
     (let [final (loop [ranges ranges x :seed]
                   (if (not= x :location)
                     (let [{o :old n :new} (adjust-all maps ranges x)]
-                      (recur (apply conj o n) ((maps x) :to)))
-                    ranges))]
-      (apply min (map :lb final)))))
-
-#_(defn part2
-  [categories seeds]
-  (let [maps (apply merge (map category->map categories))
-        ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
-    (let [final (loop [ranges ranges x :seed]
-                  (if (not= x :location)
-                    (let [{o :old n :new} (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
-                            (if (seq adjs)
-                              (let [{o :old n :new} (adjust-one old-outer (first adjs))]
-                                (recur (rest adjs) o (apply conj new-outer n)))
-                              {:old old-outer :new new-outer}))]
                       (recur (apply conj o n) ((maps x) :to)))
                     ranges))]
       (apply min (map :lb final)))))
