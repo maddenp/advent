@@ -56,32 +56,33 @@
   [categories seeds]
   (let [maps (apply merge (map category->map categories))
         ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
-    (loop [ranges ranges x :seed]
-      (println "@@@" ranges)
-      (if (not= x :location)
-        (let [{o :old n :new}
-              (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
-                    (if (seq adjs)
-                      (let [a (first adjs)]
-                        (do (println "+++" adjs "old-outer" old-outer "new-outer" new-outer)
-                            (let [{o :old n :new}
-                                  (loop [rs old-outer old-inner [] new-inner []]
-                                    (if (seq rs)
-                                      (let [r (first rs)]
-                                        (do (println "rs" rs
-                                                     "old-inner" old-inner
-                                                     "new-inner" new-inner)
-                                            (let [{o :old n :new}
-                                                  (update r a)]
-                                              (println "a"  a "r" r "o" o "n" n)
-                                              (recur (rest rs)
-                                                     (apply conj old-inner o)
-                                                     (apply conj new-inner n)))))
-                                      {:old old-inner :new new-inner}))]
-                              (recur (rest adjs) o (apply conj new-outer n)))))
-                      {:old old-outer :new new-outer})))]
-          (recur (apply conj o n) ((maps x) :to)))
-        ranges))))
+    (let [final (loop [ranges ranges x :seed]
+                  (println "@@@" ranges)
+                  (if (not= x :location)
+                    (let [{o :old n :new}
+                          (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
+                                (if (seq adjs)
+                                  (let [a (first adjs)]
+                                    (do (println "+++" adjs "old-outer" old-outer "new-outer" new-outer)
+                                        (let [{o :old n :new}
+                                              (loop [rs old-outer old-inner [] new-inner []]
+                                                (if (seq rs)
+                                                  (let [r (first rs)]
+                                                    (do (println "rs" rs
+                                                                 "old-inner" old-inner
+                                                                 "new-inner" new-inner)
+                                                        (let [{o :old n :new}
+                                                              (update r a)]
+                                                          (println "a"  a "r" r "o" o "n" n)
+                                                          (recur (rest rs)
+                                                                 (apply conj old-inner o)
+                                                                 (apply conj new-inner n)))))
+                                                  {:old old-inner :new new-inner}))]
+                                          (recur (rest adjs) o (apply conj new-outer n)))))
+                                  {:old old-outer :new new-outer})))]
+                      (recur (apply conj o n) ((maps x) :to)))
+                    ranges))]
+      (apply min (map :lb final)))))
 
 (let [blocks (s/split almanac #_(slurp "05.txt") #"(?s)\n\n")
       seeds (strs->nums (last (s/split (first blocks) #": ")))
