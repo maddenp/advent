@@ -57,21 +57,21 @@
     (let [final (loop [ranges ranges x :seed]
                   (if (not= x :location)
                     (let [{o :old n :new}
-                          (do (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
-                                (if (seq adjs)
-                                  (let [a (first adjs)]
-                                    (do (let [{o :old n :new}
-                                              (loop [rs old-outer old-inner [] new-inner []]
-                                                (if (seq rs)
-                                                  (let [r (first rs)]
-                                                    (do (let [{o :old n :new}
-                                                              (update-range r a)]
-                                                          (recur (rest rs)
-                                                                 (apply conj old-inner o)
-                                                                 (apply conj new-inner n)))))
-                                                  {:old old-inner :new new-inner}))]
-                                          (recur (rest adjs) o (apply conj new-outer n)))))
-                                  {:old old-outer :new new-outer})))]
+                          (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
+                            (if (seq adjs)
+                              (let [a (first adjs)]
+                                (let [{o :old n :new}
+                                      (loop [rs old-outer old-inner [] new-inner []]
+                                        (if (seq rs)
+                                          (let [r (first rs)]
+                                            (let [{o :old n :new}
+                                                  (update-range r a)]
+                                              (recur (rest rs)
+                                                     (apply conj old-inner o)
+                                                     (apply conj new-inner n))))
+                                          {:old old-inner :new new-inner}))]
+                                  (recur (rest adjs) o (apply conj new-outer n))))
+                              {:old old-outer :new new-outer}))]
                       (recur (apply conj o n) ((maps x) :to)))
                     ranges))]
       (apply min (map :lb final)))))
