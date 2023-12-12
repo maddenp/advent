@@ -50,7 +50,31 @@
   (let [maps (into {} (map category->map categories))]
     (reduce min (for [seed seeds] (path maps :seed seed)))))
 
+(defn adjust
+  [old-outer adj]
+  (loop [rs old-outer old-inner [] new-inner []]
+    (if (seq rs)
+      (let [{o :old n :new} (update-range (first rs) adj)]
+        (recur (rest rs)
+               (apply conj old-inner o)
+               (apply conj new-inner n)))
+      {:old old-inner :new new-inner})))
+
 (defn part2
+  [categories seeds]
+  (let [maps (apply merge (map category->map categories))
+        ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
+    (let [final (loop [ranges ranges x :seed]
+                  (if (not= x :location)
+                    (let [{o :old n :new} (loop [adjs ((maps x) :ranges) old-outer ranges new-outer []]
+                            (if (seq adjs)
+                              (let [{o :old n :new} (adjust old-outer (first adjs))]
+                                (recur (rest adjs) o (apply conj new-outer n)))
+                              {:old old-outer :new new-outer}))]
+                      (recur (apply conj o n) ((maps x) :to)))
+                    ranges))]
+      (apply min (map :lb final)))))
+#_(defn part2
   [categories seeds]
   (let [maps (apply merge (map category->map categories))
         ranges (map (fn [[start n]] {:lb start :ub (- (+ start n) 1)}) (partition 2 seeds))]
