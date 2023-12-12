@@ -84,7 +84,7 @@
                     ranges))]
       (apply min (map :lb final)))))
 
-(let [blocks (s/split almanac #_(slurp "05.txt") #"(?s)\n\n")
+(let [blocks (s/split #_almanac (slurp "05.txt") #"(?s)\n\n")
       seeds (strs->nums (last (s/split (first blocks) #": ")))
       categories (rest blocks)]
   (println #_(part1 categories seeds) (part2 categories seeds)))
