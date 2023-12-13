@@ -71,9 +71,9 @@
       (if (empty? queue)
         (apply max (vals dist))
         (let [x (peek queue)
-              v (neighbors-to-visit arr x dist)]
-          (recur (merge dist (zipmap v (repeat (inc (dist x)))))
-                 (apply conj (pop queue) v)))))))
+              visit (neighbors-to-visit arr x dist)]
+          (recur (merge dist (zipmap visit (repeat (inc (dist x)))))
+                 (apply conj (pop queue) visit)))))))
 
 (let [input (as-> #_demo (slurp "10.txt") $
                   (apply str (map char->pipe $))
