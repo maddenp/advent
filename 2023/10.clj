@@ -47,7 +47,7 @@
 
 (defn plausible-neighbors
   [pipe neighbors]
-  (apply union (for [d dirs] (intersection ((fittings pipe) d) (set [(neighbors d)])))))
+  (apply union (map #(intersection ((fittings pipe) %) (set [(neighbors %)])) dirs)))
 
 (defn s->pipe
   [a s]
