@@ -26,6 +26,13 @@
 (defn rows [a] (alength a))
 (defn fits? [c con dir] (((fittings c) dir) con))
 
+#_(defn show
+  [a]
+  (doseq [row (range (rows a))]
+    (doseq [col (range (cols a))]
+      (print (aget a row col)))
+    (println)))
+
 (defn coords->neighbors
   [a coords]
   (for [dir dirs]
@@ -33,15 +40,15 @@
       (at a [(+ r (get offset 0))
              (+ c (get offset 1))]))))
 
+(defn plausible-neighbors
+  [pipe neighbors]
+  (apply union (map #(intersection ((fittings pipe) %) (set [(neighbors %)])) dirs)))
+
 (defn s->coords
   [a]
   (->> (cartesian-product (range (rows a)) (range (cols a)))
        (filter #(= \S (at a %)))
        first))
-
-(defn plausible-neighbors
-  [pipe neighbors]
-  (apply union (map #(intersection ((fittings pipe) %) (set [(neighbors %)])) dirs)))
 
 (defn s->pipe
   [a s]
@@ -51,13 +58,6 @@
          (filter #(= 2 (count (last %))))
          first
          first)))
-
-(defn show
-  [a]
-  (doseq [row (range (rows a))]
-    (doseq [col (range (cols a))]
-      (print (aget a row col)))
-    (println)))
 
 (defn part1
   [a]
