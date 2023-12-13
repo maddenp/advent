@@ -16,14 +16,14 @@
   (or (get {\| \║ \- \═ \L \╚ \J \╝ \7 \╗ \F \╔} c) c))
 
 (defn connects?
-  [pipe dir con]
+  [c dir con]
   (let [fittings {\║ {:n #{\║ \╗ \╔} :e #{        } :s #{\║ \╚ \╝} :w #{        }}
                   \═ {:n #{        } :e #{\═ \╝ \╗} :s #{        } :w #{\═ \╚ \╔}}
                   \╚ {:n #{\║ \╗ \╔} :e #{\═ \╝ \╗} :s #{        } :w #{        }}
                   \╝ {:n #{\║ \╗ \╔} :e #{        } :s #{        } :w #{\═ \╚ \╔}}
                   \╗ {:n #{        } :e #{        } :s #{\║ \╚ \╝} :w #{\═ \╚ \╔}}
-                  \╔ {:n #{        } :e #{\═ \╚ \╔} :s #{\║ \╚ \╝} :w #{        }}}]
-    (((fittings pipe) dir) con)))
+                  \╔ {:n #{        } :e #{\═ \╝ \╗} :s #{\║ \╚ \╝} :w #{        }}}]
+    (((fittings c) dir) con)))
 
 (def dirs [:n :e :s :w])
 (def offsets (zipmap dirs [[-1 0] [0 +1] [+1 0] [0 -1]]))
@@ -51,12 +51,36 @@
       [1 0 1 0] \║
       [1 1 0 0] \╚} (mapv #(if (= \. %) 0 1) ns))))
 
+(defn show
+  [a]
+  (doseq [row (range (rows a))]
+    (doseq [col (range (cols a))]
+      (print (aget a row col)))
+    (println)))
+
 (defn part1
   [a]
-  (let [s (find-s a)
-        p (s->pipe a s)]
-    p
-    #_(s->pipe a)
+  (show a)
+  (let [s (find-s a)]
+    (aset a (first s) (last s) (s->pipe a s))
+    (show a)
+    (for [dir dirs]
+      (let [offset (offsets dir)
+            coords [(+ (first s) (first offset)) (+ (last s) (last offset))]
+            con (at a coords)]
+        (println con)
+        (when (connects? (at a s) dir con) con)))
+    ))
+
+#_(println (apply str (map char->pipe demo #_(slurp "10.txt"))))
+(let [input (as-> demo #_(slurp "10.txt") $
+                  (apply str (map char->pipe $))
+                  (s/split $ #"\n")
+                  (to-array-2d $)
+                  )]
+  (println (part1 input)))
+
+;;     #_(s->pipe a)
 ;;     (for [dir dirs]
 ;;       (let [offset (offsets dir)
 ;;             coords [(+ (first s) (first offset)) (+ (last s) (last offset))]
@@ -68,18 +92,9 @@
 ;;       (map #(offsets %) $)
 ;;       (map #(map (fn [[a b]] (+ a b)) (partition 2 (interleave s %))) $)
 ;;       (map #(at a %) $)
-))
+;; ))
          
 ;;     (map #(at a %) (halo a s))))
-
-(println (apply str (map char->pipe demo #_(slurp "10.txt"))))
-(let [input (as-> demo #_(slurp "10.txt") $
-                  (apply str (map char->pipe $))
-                  (s/split $ #"\n")
-                  (to-array-2d $)
-                  )]
-  (println (part1 input)))
-
 
 ; \║ \═ \╚ \╝ \╗ \╔
 
