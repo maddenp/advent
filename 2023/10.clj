@@ -21,16 +21,10 @@
    \╔ {:n #{        } :e #{\═ \╝ \╗} :s #{\║ \╚ \╝} :w #{        }}})
 
 (defn at [a [r c]] (try (aget a r c) (catch Exception _ \.)))
+(defn char->pipe [c] (or (get (zipmap [\| \- \L \J \7 \F] pipes) c) c))
 (defn cols [a] (alength (aget a 0)))
 (defn rows [a] (alength a))
-
-(defn char->pipe
-  [c]
-  (or (get (zipmap [\| \- \L \J \7 \F] pipes) c) c))
-
-(defn fits?
-  [c con dir]
-  (((fittings c) dir) con))
+(defn fits? [c con dir] (((fittings c) dir) con))
 
 (defn coords->neighbors
   [a coords]
