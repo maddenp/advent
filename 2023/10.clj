@@ -32,7 +32,7 @@
   [c con dir]
   (((fittings c) dir) con))
 
-(defn neighbors
+(defn coords->neighbors
   [a coords]
   (for [dir dirs]
     (let [offset (offsets dir) [r c] coords]
@@ -45,14 +45,18 @@
        (filter #(= \S (at a %)))
        first))
 
+(defn plausible-neighbors
+  [pipe neighbors]
+  (apply union (for [d dirs] (intersection ((fittings pipe) d) (set [(neighbors d)])))))
+
 (defn s->pipe
   [a s]
-  (let [n-of-s (zipmap dirs (neighbors a s))]
+  (let [neighbors (zipmap dirs (coords->neighbors a s))]
     (first
       (first
         (filter #(= 2 (count (last %)))
                 (for [p pipes]
-                  [p (apply union (for [d dirs] (intersection ((fittings p) d) (set [(n-of-s d)]))))]))))))
+                  [p (plausible-neighbors p neighbors)]))))))
 
 (defn show
   [a]
