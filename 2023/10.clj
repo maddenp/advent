@@ -69,16 +69,14 @@
                 coords)))))
 
 (defn part1
-  [arr]
-  (let [s (s->coords arr)]
-    (aset arr (first s) (last s) (s->pipe arr s))
-    (loop [dist {s 0} queue (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
-      (if (empty? queue)
-        (apply max (vals dist))
-        (let [x (peek queue)
-              visit (neighbors-to-visit arr x dist)]
-          (recur (merge dist (zipmap visit (repeat (inc (dist x)))))
-                 (apply conj (pop queue) visit)))))))
+  [arr s]
+  (loop [dist {s 0} queue (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
+    (if (empty? queue)
+      (apply max (vals dist))
+      (let [x (peek queue)
+            visit (neighbors-to-visit arr x dist)]
+        (recur (merge dist (zipmap visit (repeat (inc (dist x)))))
+               (apply conj (pop queue) visit))))))
 
 (defn show
     [arr]
@@ -87,14 +85,16 @@
         (print (aget arr row col)))
       (println)))
 
-(defn part2
-  [arr]
+#_(defn part2
+  [arr s]
   (let [s (s->coords arr)]
     (aset arr (first s) (last s) (s->pipe arr s))
     (show arr)))
 
-(let [input (as-> demo #_(slurp "10.txt") $
-                  (apply str (map char->pipe $))
-                  (s/split $ #"\n")
-                  (to-array-2d $))]
-  (println #_(part1 input) (part2 input)))
+(let [arr (as-> #_demo (slurp "10.txt") $
+                (apply str (map char->pipe $))
+                (s/split $ #"\n")
+                (to-array-2d $))
+      s (s->coords arr)]
+  (aset arr (first s) (last s) (s->pipe arr s))
+  (println (part1 arr s) #_(part2 arr s)))
