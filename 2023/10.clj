@@ -27,11 +27,11 @@
 (defn fits? [c con dir] (((fittings c) dir) con))
 
 #_(defn show
-  [a]
-  (doseq [row (range (rows a))]
-    (doseq [col (range (cols a))]
-      (print (aget a row col)))
-    (println)))
+    [a]
+    (doseq [row (range (rows a))]
+      (doseq [col (range (cols a))]
+        (print (aget a row col)))
+      (println)))
 
 (defn coords->neighbors
   [a coords]
@@ -59,6 +59,17 @@
          first
          first)))
 
+(defn to-visit
+  [a x d]
+  (remove nil?
+          (for [dir dirs]
+            (let [offset (offsets dir)
+                  coords [(+ (first x) (first offset))
+                          (+ (last x) (last offset))]]
+              (when (and (fits? (at a x) (at a coords) dir)
+                         (or (not (d coords)) (> (d coords) (inc (d x)))))
+                coords)))))
+
 (defn part1
   [a]
   (let [s (s->coords a)]
@@ -67,16 +78,9 @@
       (if (empty? q)
         (apply max (vals d))
         (let [x (peek q)
-              visit (remove nil?
-                            (for [dir dirs]
-                              (let [offset (offsets dir)
-                                    coords [(+ (first x) (first offset))
-                                            (+ (last x) (last offset))]]
-                                (when (and (fits? (at a x) (at a coords) dir)
-                                           (or (not (d coords)) (> (d coords) (inc (d x)))))
-                                  coords))))]
-          (recur (merge d (zipmap visit (repeat (inc (d x)))))
-                 (apply conj (pop q) visit)))))))
+              v (to-visit a x d)]
+          (recur (merge d (zipmap v (repeat (inc (d x)))))
+                 (apply conj (pop q) v)))))))
 
 (let [input (as-> #_demo (slurp "10.txt") $
                   (apply str (map char->pipe $))
