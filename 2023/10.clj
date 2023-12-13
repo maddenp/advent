@@ -96,7 +96,7 @@
           (recur (merge d (zipmap visit (repeat (inc (d x)))))
                  (apply conj (pop q) visit)))))))
 
-(let [input (as-> demo #_(slurp "10.txt") $
+(let [input (as-> #_demo (slurp "10.txt") $
                   (apply str (map char->pipe $))
                   (s/split $ #"\n")
                   (to-array-2d $)
