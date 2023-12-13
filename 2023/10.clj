@@ -26,13 +26,6 @@
 (defn rows [arr] (alength arr))
 (defn fits? [c con dir] (((fittings c) dir) con))
 
-#_(defn show
-    [arr]
-    (doseq [row (range (rows arr))]
-      (doseq [col (range (cols arr))]
-        (print (aget arr row col)))
-      (println)))
-
 (defn coords->neighbors
   [arr coords]
   (for [dir dirs]
@@ -60,30 +53,37 @@
          first)))
 
 (defn neighbors-to-visit
-  [arr x d]
+  [arr x dist]
   (remove nil?
           (for [dir dirs]
             (let [offset (offsets dir)
                   coords [(+ (first x) (first offset))
                           (+ (last x) (last offset))]]
               (when (and (fits? (at arr x) (at arr coords) dir)
-                         (or (not (d coords)) (> (d coords) (inc (d x)))))
+                         (or (not (dist coords)) (> (dist coords) (inc (dist x)))))
                 coords)))))
 
 (defn part1
   [arr]
   (let [s (s->coords arr)]
     (aset arr (first s) (last s) (s->pipe arr s))
-    (loop [d {s 0} q (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
-      (if (empty? q)
-        (apply max (vals d))
-        (let [x (peek q)
-              v (neighbors-to-visit arr x d)]
-          (recur (merge d (zipmap v (repeat (inc (d x)))))
-                 (apply conj (pop q) v)))))))
+    (loop [dist {s 0} queue (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
+      (if (empty? queue)
+        (apply max (vals dist))
+        (let [x (peek queue)
+              v (neighbors-to-visit arr x dist)]
+          (recur (merge dist (zipmap v (repeat (inc (dist x)))))
+                 (apply conj (pop queue) v)))))))
 
 (let [input (as-> #_demo (slurp "10.txt") $
                   (apply str (map char->pipe $))
                   (s/split $ #"\n")
                   (to-array-2d $))]
   (println (part1 input)))
+
+#_(defn show
+    [arr]
+    (doseq [row (range (rows arr))]
+      (doseq [col (range (cols arr))]
+        (print (aget arr row col)))
+      (println)))
