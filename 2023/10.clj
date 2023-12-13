@@ -68,6 +68,13 @@
                          (or (not (dist coords)) (> (dist coords) (inc (dist x)))))
                 coords)))))
 
+(defn show
+    [arr]
+    (doseq [row (range (rows arr))]
+      (doseq [col (range (cols arr))]
+        (print (aget arr row col)))
+      (println)))
+
 (defn part1
   [arr s]
   (loop [dist {s 0} queue (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
@@ -78,23 +85,14 @@
         (recur (merge dist (zipmap visit (repeat (inc (dist x)))))
                (apply conj (pop queue) visit))))))
 
-(defn show
-    [arr]
-    (doseq [row (range (rows arr))]
-      (doseq [col (range (cols arr))]
-        (print (aget arr row col)))
-      (println)))
-
-#_(defn part2
+(defn part2
   [arr s]
-  (let [s (s->coords arr)]
-    (aset arr (first s) (last s) (s->pipe arr s))
-    (show arr)))
+  (show arr))
 
-(let [arr (as-> #_demo (slurp "10.txt") $
+(let [arr (as-> demo #_(slurp "10.txt") $
                 (apply str (map char->pipe $))
                 (s/split $ #"\n")
                 (to-array-2d $))
       s (s->coords arr)]
   (aset arr (first s) (last s) (s->pipe arr s))
-  (println (part1 arr s) #_(part2 arr s)))
+  (println #_(part1 arr s) (part2 arr s)))
