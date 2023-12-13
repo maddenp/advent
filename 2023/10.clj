@@ -39,21 +39,11 @@
       (at a [(+ r (get offset 0))
              (+ c (get offset 1))]))))
 
-(defn find-s
+(defn s->coords
   [a]
   (->> (cartesian-product (range (rows a)) (range (cols a)))
        (filter #(= \S (at a %)))
        first))
-
-#_(defn s->pipe
-  [a s]
-  (let [ns (neighbors a s)]
-    ({[0 0 1 1] \╗
-      [0 1 0 1] \═
-      [0 1 1 0] \╔
-      [1 0 0 1] \╝
-      [1 0 1 0] \║
-      [1 1 0 0] \╚} (mapv #(if (= \. %) 0 1) ns))))
 
 (defn s->pipe
   [a s]
@@ -64,8 +54,6 @@
                 (for [p pipes]
                   [p (apply union (for [d dirs] (intersection ((fittings p) d) (set [(n-of-s d)]))))]))))))
 
-#_((fittings \║) :n)
-
 (defn show
   [a]
   (doseq [row (range (rows a))]
@@ -75,12 +63,9 @@
 
 (defn part1
   [a]
-  (let [s (find-s a)]
+  (let [s (s->coords a)]
     (aset a (first s) (last s) (s->pipe a s))
-    #_(show a)
     (loop [d {s 0} q (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
-      #_(println "@@@" d (seq q) (peek q))
-      #_(read-line)
       (if (empty? q)
         (apply max (vals d))
         (let [x (peek q)
@@ -92,7 +77,6 @@
                                 (when (and (fits? (at a x) (at a coords) dir)
                                            (or (not (d coords)) (> (d coords) (inc (d x)))))
                                   coords))))]
-          #_(println "+++" visit)
           (recur (merge d (zipmap visit (repeat (inc (d x)))))
                  (apply conj (pop q) visit)))))))
 
@@ -102,29 +86,3 @@
                   (to-array-2d $)
                   )]
   (println (part1 input)))
-
-;;     #_(s->pipe a)
-;;     (for [dir dirs]
-;;       (let [offset (offsets dir)
-;;             coords [(+ (first s) (first offset)) (+ (last s) (last offset))]
-;;             con (at a coords)]
-;;         offset
-;;         #_(at a coords)
-;;         #_(fits? (at a s) dir con)
-;;     (as-> [:n :e :s :w] $
-;;       (map #(offsets %) $)
-;;       (map #(map (fn [[a b]] (+ a b)) (partition 2 (interleave s %))) $)
-;;       (map #(at a %) $)
-;; ))
-         
-;;     (map #(at a %) (halo a s))))
-
-; \║ \═ \╚ \╝ \╗ \╔
-
-#_(defn halo
-  [a [r c]]
-  (->> [[-1 0] [0 +1] [+1 0] [0 -1]]
-       (map (fn [[dr dc]] [(+ r dr) (+ c dc)]))
-       (filter (fn [[hr hc]] (and (not= [hr hc] [r c])
-                                  (<= 0 hr (dec (rows a)))
-                                  (<= 0 hc (dec (cols a))))))))
