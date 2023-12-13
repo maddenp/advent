@@ -52,11 +52,11 @@
 (defn s->pipe
   [a s]
   (let [neighbors (zipmap dirs (coords->neighbors a s))]
-    (first
-      (first
-        (filter #(= 2 (count (last %)))
-                (for [p pipes]
-                  [p (plausible-neighbors p neighbors)]))))))
+    (->> pipes
+         (map #(vector % (plausible-neighbors % neighbors)))
+         (filter #(= 2 (count (last %))))
+         first
+         first)))
 
 (defn show
   [a]
@@ -87,6 +87,5 @@
 (let [input (as-> #_demo (slurp "10.txt") $
                   (apply str (map char->pipe $))
                   (s/split $ #"\n")
-                  (to-array-2d $)
-                  )]
+                  (to-array-2d $))]
   (println (part1 input)))
