@@ -64,18 +64,22 @@
   (let [s (find-s a)]
     (aset a (first s) (last s) (s->pipe a s))
     (loop [d {s 0} q (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
-      (println "@@@" d (seq q))
+      #_(println "@@@" d (seq q) (peek q))
+      #_(read-line)
       (if (empty? q)
         d
         (let [x (peek q)
-              to-visit (for [dir dirs]
-                         (let [offset (offsets dir)
-                               coords [(+ (first x) (first offset)) (+ (last x) (last offset))]]
-                           (when (and (connects? (at a x) (at a coords) dir)
-                                      (or (not (d coords)) (> (d x) (d coords))))
-                             coords)))]
-          (recur (zipmap (remove nil? to-visit) (repeat (inc (d x))))
-                 (clojure.lang.PersistentQueue/EMPTY)))))))
+              visit (remove nil?
+                            (for [dir dirs]
+                              (let [offset (offsets dir)
+                                    coords [(+ (first x) (first offset))
+                                            (+ (last x) (last offset))]]
+                                (when (and (connects? (at a x) (at a coords) dir)
+                                           (or (not (d coords)) (> (d coords) (inc (d x)))))
+                                  coords))))]
+          #_(println "+++" visit)
+          (recur (merge d (zipmap visit (repeat (inc (d x)))))
+                 (apply conj (pop q) visit)))))))
 
 (let [input (as-> demo #_(slurp "10.txt") $
                   (apply str (map char->pipe $))
