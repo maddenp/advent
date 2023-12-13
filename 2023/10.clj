@@ -2,11 +2,16 @@
          '[clojure.set :refer [intersection union]]
          '[clojure.string :as s])
 
-(def demo (s/join "\n" ["7-F7-"
-                        ".FJ|7"
-                        "SJLL7"
-                        "|F--J"
-                        "LJ.LJ"]))
+(def demo (s/join "\n" [".F----7F7F7F7F-7...."
+                        ".|F--7||||||||FJ...."
+                        ".||.FJ||||||||L7...."
+                        "FJL7L7LJLJ||LJ.L-7.."
+                        "L--J.L7...LJS7F-7L7."
+                        "....F-J..F7FJ|L7L7L7"
+                        "....L7.F7||L7|.L7L7|"
+                        ".....|FJLJ|FJ|F7|.LJ"
+                        "....FJL-7.||.||||..."
+                        "....L---J.LJ.LJLJ..."]))
 
 (def dirs [:n :e :s :w])
 (def offsets (zipmap dirs [[-1 0] [0 +1] [+1 0] [0 -1]]))
@@ -75,15 +80,21 @@
           (recur (merge dist (zipmap visit (repeat (inc (dist x)))))
                  (apply conj (pop queue) visit)))))))
 
-(let [input (as-> #_demo (slurp "10.txt") $
-                  (apply str (map char->pipe $))
-                  (s/split $ #"\n")
-                  (to-array-2d $))]
-  (println (part1 input)))
-
-#_(defn show
+(defn show
     [arr]
     (doseq [row (range (rows arr))]
       (doseq [col (range (cols arr))]
         (print (aget arr row col)))
       (println)))
+
+(defn part2
+  [arr]
+  (let [s (s->coords arr)]
+    (aset arr (first s) (last s) (s->pipe arr s))
+    (show arr)))
+
+(let [input (as-> demo #_(slurp "10.txt") $
+                  (apply str (map char->pipe $))
+                  (s/split $ #"\n")
+                  (to-array-2d $))]
+  (println #_(part1 input) (part2 input)))
