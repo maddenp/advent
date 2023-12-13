@@ -1,4 +1,5 @@
 (require '[clojure.math.combinatorics :refer [cartesian-product]]
+         '[clojure.set :refer [intersection union]]
          '[clojure.string :as s])
 
 (def demo (s/join "\n" ["7-F7-"
@@ -9,6 +10,15 @@
 
 (def dirs [:n :e :s :w])
 (def offsets (zipmap dirs [[-1 0] [0 +1] [+1 0] [0 -1]]))
+(def pipes [\║ \═ \╚ \╝ \╗ \╔])
+
+(def fittings
+  {\║ {:n #{\║ \╗ \╔} :e #{        } :s #{\║ \╚ \╝} :w #{        }}
+   \═ {:n #{        } :e #{\═ \╝ \╗} :s #{        } :w #{\═ \╚ \╔}}
+   \╚ {:n #{\║ \╗ \╔} :e #{\═ \╝ \╗} :s #{        } :w #{        }}
+   \╝ {:n #{\║ \╗ \╔} :e #{        } :s #{        } :w #{\═ \╚ \╔}}
+   \╗ {:n #{        } :e #{        } :s #{\║ \╚ \╝} :w #{\═ \╚ \╔}}
+   \╔ {:n #{        } :e #{\═ \╝ \╗} :s #{\║ \╚ \╝} :w #{        }}})
 
 (defn at [a [r c]] (try (aget a r c) (catch Exception _ \.)))
 (defn cols [a] (alength (aget a 0)))
@@ -16,17 +26,11 @@
 
 (defn char->pipe
   [c]
-  (or (get {\| \║ \- \═ \L \╚ \J \╝ \7 \╗ \F \╔} c) c))
+  (or (get (zipmap [\| \- \L \J \7 \F] pipes) c) c))
 
-(defn connects?
+(defn fits?
   [c con dir]
-  (let [fittings {\║ {:n #{\║ \╗ \╔} :e #{        } :s #{\║ \╚ \╝} :w #{        }}
-                  \═ {:n #{        } :e #{\═ \╝ \╗} :s #{        } :w #{\═ \╚ \╔}}
-                  \╚ {:n #{\║ \╗ \╔} :e #{\═ \╝ \╗} :s #{        } :w #{        }}
-                  \╝ {:n #{\║ \╗ \╔} :e #{        } :s #{        } :w #{\═ \╚ \╔}}
-                  \╗ {:n #{        } :e #{        } :s #{\║ \╚ \╝} :w #{\═ \╚ \╔}}
-                  \╔ {:n #{        } :e #{\═ \╝ \╗} :s #{\║ \╚ \╝} :w #{        }}}]
-    (((fittings c) dir) con)))
+  (((fittings c) dir) con))
 
 (defn neighbors
   [a coords]
@@ -41,7 +45,7 @@
        (filter #(= \S (at a %)))
        first))
 
-(defn s->pipe
+#_(defn s->pipe
   [a s]
   (let [ns (neighbors a s)]
     ({[0 0 1 1] \╗
@@ -50,6 +54,17 @@
       [1 0 0 1] \╝
       [1 0 1 0] \║
       [1 1 0 0] \╚} (mapv #(if (= \. %) 0 1) ns))))
+
+(defn s->pipe
+  [a s]
+  (let [n-of-s (zipmap dirs (neighbors a s))]
+    (first
+      (first
+        (filter #(= 2 (count (last %)))
+                (for [p pipes]
+                  [p (apply union (for [d dirs] (intersection ((fittings p) d) (set [(n-of-s d)]))))]))))))
+
+#_((fittings \║) :n)
 
 (defn show
   [a]
@@ -60,21 +75,21 @@
 
 (defn part1
   [a]
-  (show a)
   (let [s (find-s a)]
     (aset a (first s) (last s) (s->pipe a s))
+    #_(show a)
     (loop [d {s 0} q (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
       #_(println "@@@" d (seq q) (peek q))
       #_(read-line)
       (if (empty? q)
-        d
+        (apply max (vals d))
         (let [x (peek q)
               visit (remove nil?
                             (for [dir dirs]
                               (let [offset (offsets dir)
                                     coords [(+ (first x) (first offset))
                                             (+ (last x) (last offset))]]
-                                (when (and (connects? (at a x) (at a coords) dir)
+                                (when (and (fits? (at a x) (at a coords) dir)
                                            (or (not (d coords)) (> (d coords) (inc (d x)))))
                                   coords))))]
           #_(println "+++" visit)
@@ -95,7 +110,7 @@
 ;;             con (at a coords)]
 ;;         offset
 ;;         #_(at a coords)
-;;         #_(connects? (at a s) dir con)
+;;         #_(fits? (at a s) dir con)
 ;;     (as-> [:n :e :s :w] $
 ;;       (map #(offsets %) $)
 ;;       (map #(map (fn [[a b]] (+ a b)) (partition 2 (interleave s %))) $)
