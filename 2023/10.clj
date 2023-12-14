@@ -58,14 +58,14 @@
          first)))
 
 (defn neighbors-to-visit
-  [arr x dist]
+  [arr x dists]
   (remove nil?
           (for [dir dirs]
             (let [offset (offsets dir)
                   coords [(+ (first x) (first offset))
                           (+ (last x) (last offset))]]
               (when (and (fits? (at arr x) (at arr coords) dir)
-                         (or (not (dist coords)) (> (dist coords) (inc (dist x)))))
+                         (or (not (dists coords)) (> (dists coords) (inc (dists x)))))
                 coords)))))
 
 (defn show
@@ -77,20 +77,20 @@
 
 (defn score-cells
   [arr s]
-  (loop [dist {s 0} queue (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
+  (loop [dists {s 0} queue (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
     (if (empty? queue)
-      dist
+      dists
       (let [x (peek queue)
-            visit (neighbors-to-visit arr x dist)]
-        (recur (merge dist (zipmap visit (repeat (inc (dist x)))))
+            visit (neighbors-to-visit arr x dists)]
+        (recur (merge dists (zipmap visit (repeat (inc (dists x)))))
                (apply conj (pop queue) visit))))))
   
 (defn part1
-  [arr s]
-  (apply max (vals (score-cells arr s))))
+  [dists]
+  (apply max (vals dists)))
 
 (defn part2
-  [arr s]
+  [arr dists]
   (show arr))
 
 (let [arr (as-> #_demo (slurp "10.txt") $
@@ -99,4 +99,5 @@
                 (to-array-2d $))
       s (s->coords arr)]
   (aset arr (first s) (last s) (s->pipe arr s))
-  (println (part1 arr s) #_(part2 arr s)))
+  (let [dists (score-cells arr s)]
+    (println (part1 dists) #_(part2 arr dists))))
