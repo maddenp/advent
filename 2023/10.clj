@@ -75,24 +75,28 @@
         (print (aget arr row col)))
       (println)))
 
-(defn part1
+(defn score-cells
   [arr s]
   (loop [dist {s 0} queue (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
     (if (empty? queue)
-      (apply max (vals dist))
+      dist
       (let [x (peek queue)
             visit (neighbors-to-visit arr x dist)]
         (recur (merge dist (zipmap visit (repeat (inc (dist x)))))
                (apply conj (pop queue) visit))))))
+  
+(defn part1
+  [arr s]
+  (apply max (vals (score-cells arr s))))
 
 (defn part2
   [arr s]
   (show arr))
 
-(let [arr (as-> demo #_(slurp "10.txt") $
+(let [arr (as-> #_demo (slurp "10.txt") $
                 (apply str (map char->pipe $))
                 (s/split $ #"\n")
                 (to-array-2d $))
       s (s->coords arr)]
   (aset arr (first s) (last s) (s->pipe arr s))
-  (println #_(part1 arr s) (part2 arr s)))
+  (println (part1 arr s) #_(part2 arr s)))
