@@ -112,6 +112,7 @@
 
 (defn part2
   [arr dists]
+  ;; Uses the Shoelace Formula and Pick's Theorem.
   (let [b (count (clockwise-all arr dists))
         cwv (vec (clockwise-vertexes arr dists))
         A (as-> (first cwv) $
