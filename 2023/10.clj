@@ -219,21 +219,25 @@
          (remove nil?)
          set)))
 
-(defn part2
+(defn inside-all
   [arr dists]
   (let [circuit (set (keys dists))
         icca (inside-coords-circuit-adjacent arr dists)]
     (loop [check icca inside icca]
       (println "@@@" "check" check "inside" inside)
-      (read-line)
+      #_(read-line)
       (if (seq check)
         (let [new (filter #(not (or (circuit %) (inside %))) (coords->neighbors (first check)))]
           (println "+++" "new" new)
-          (read-line)
+          #_(read-line)
           (recur (apply conj (rest check) new) (apply conj inside new)))
         inside))))
 
-(let [arr (as-> demo0 #_(slurp "10.txt") $
+(defn part2
+  [arr dists]
+  (count (inside-all arr dists)))
+
+(let [arr (as-> demo2 #_(slurp "10.txt") $
                 (apply str (map char->pipe $))
                 (s/split $ #"\n")
                 (to-array-2d $))
