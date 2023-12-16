@@ -2,6 +2,16 @@
          '[clojure.set :refer [difference intersection union]]
          '[clojure.string :as s])
 
+(def demo0 (s/join "\n" ["..........."
+                         ".S-------7."
+                         ".|F-----7|."
+                         ".||.....||."
+                         ".||.....||."
+                         ".|L-7.F-J|."
+                         ".|..|.|..|."
+                         ".L--J.L--J."
+                         "..........."]))
+
 (def demo1 (s/join "\n" [".F----7F7F7F7F-7...."
                          ".|F--7||||||||FJ...."
                          ".||.FJ||||||||L7...."
@@ -133,10 +143,6 @@
         candidates (difference (set (cells arr)) circuit)]
     (outside? arr circuit [2 2])))
 
-(defn det
-  [[r1 c1] [r2 c2]]
-  (- (* r1 c2) (* r2 c1)))
-
 (def possible-directions
   (apply hash-map
          (interleave pipes [#{:n :s}
@@ -169,12 +175,30 @@
                          circuit-neighbors))]
           (recur next-x (conj visited x) (if (vertex x) (conj clockwise x) clockwise)))))))
 
+(defn det
+  [[r1 c1] [r2 c2]]
+  (- (* r1 c2) (* r2 c1)))
+
+#_(defn part2
+  [arr dists]
+  (show arr)
+  (let [cw (clockwise arr dists)]
+    (apply + (map #(det (first %) (last %)) (conj (vec (partition 2 cw)) [(last cw) (first cw)])))))
+
 (defn part2
   [arr dists]
   (show arr)
-  (clockwise arr dists))
+  #_(println (rows arr) (cols arr) (count dists))
+  (let [cw #_(clockwise arr dists) #_[[1 6] [8 5] [4 4] [7 2] [3 1]] [[3 1] [1 1] [1 3] [3 3]]]
+    (as-> (first cw) $
+      (conj cw $)
+      (map vector $ (rest $))
+      (map #(det (first %) (last %)) $)
+      (apply + $)
+      (abs $)
+      (/ $ 2))))
 
-(let [arr (as-> demo1 #_(slurp "10.txt") $
+(let [arr (as-> demo0 #_(slurp "10.txt") $
                 (apply str (map char->pipe $))
                 (s/split $ #"\n")
                 (to-array-2d $))
