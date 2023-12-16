@@ -153,9 +153,8 @@
     (> r2 r1) :s
     (> c1 c2) :w))
 
-(defn part2
+(defn clockwise
   [arr dists]
-  (show arr)
   (let [circuit (set (keys dists))
         vertex (set (filter #(#{\╚ \╝ \╗ \╔} (at arr %)) circuit))
         s (first (sort-by second vertex))]
@@ -169,6 +168,11 @@
                                (seq ((fittings (at arr x)) (direction x %))))
                          circuit-neighbors))]
           (recur next-x (conj visited x) (if (vertex x) (conj clockwise x) clockwise)))))))
+
+(defn part2
+  [arr dists]
+  (show arr)
+  (clockwise arr dists))
 
 (let [arr (as-> demo1 #_(slurp "10.txt") $
                 (apply str (map char->pipe $))
