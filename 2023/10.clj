@@ -59,7 +59,7 @@
     (let [offset (offsets dir) [r c] coords]
       [(+ r (get offset 0)) (+ c (get offset 1))])))
 
-(defn coords->neighbor-cs
+(defn coords->neighor-at
   [arr coords]
   (map (partial at arr) (coords->neighbors coords)))
 
@@ -76,7 +76,7 @@
 
 (defn s->pipe
   [arr s]
-  (let [neighbors (zipmap dirs (coords->neighbor-cs arr s))]
+  (let [neighbors (zipmap dirs (coords->neighor-at arr s))]
     (->> pipes
          (map #(vector % (plausible-neighbors % neighbors)))
          (filter #(= 2 (count (last %))))
@@ -208,14 +208,7 @@
         offset (offsets d)]
     [(+ r (offset 0)) (+ c (offset 1))]))
 
-#_(defn part2
-  [arr dists]
-  (show arr)
-  (let [circuit (set (keys dists))
-        cw (clockwise-all arr dists)]
-    (set (remove nil? (remove circuit (map inside-coord (map vector cw (rest cw))))))))
-
-(defn part2
+(defn inside-coords-circuit-adjacent
   [arr dists]
   (show arr)
   (let [circuit (set (keys dists))
@@ -225,6 +218,20 @@
          (remove circuit)
          (remove nil?)
          set)))
+
+(defn part2
+  [arr dists]
+  (let [circuit (set (keys dists))
+        icca (inside-coords-circuit-adjacent arr dists)]
+    (loop [check icca inside icca]
+      (println "@@@" "check" check "inside" inside)
+      (read-line)
+      (if (seq check)
+        (let [new (filter #(not (or (circuit %) (inside %))) (coords->neighbors (first check)))]
+          (println "+++" "new" new)
+          (read-line)
+          (recur (apply conj (rest check) new) (apply conj inside new)))
+        inside))))
 
 (let [arr (as-> demo0 #_(slurp "10.txt") $
                 (apply str (map char->pipe $))
