@@ -159,21 +159,26 @@
     (> r2 r1) :s
     (> c1 c2) :w))
 
-(defn clockwise
+(defn clockwise-all
   [arr dists]
   (let [circuit (set (keys dists))
         vertex (set (filter #(#{\╚ \╝ \╗ \╔} (at arr %)) circuit))
         s (first (sort-by second vertex))]
-    (loop [x s visited #{} clockwise []]
+    (loop [x s visited #{} cw []]
       (if (= (count visited) (count circuit))
-        clockwise
+        cw
         (let [circuit-neighbors (filter #(circuit %) (coords->neighbors x))
               next-x (first
                        (filter
                          #(and (not (visited %))
                                (seq ((fittings (at arr x)) (direction x %))))
                          circuit-neighbors))]
-          (recur next-x (conj visited x) (if (vertex x) (conj clockwise x) clockwise)))))))
+          (recur next-x (conj visited x) (conj cw x)))))))
+
+(defn clockwise
+  [arr dists]
+  (let [vertex (set (filter #(#{\╚ \╝ \╗ \╔} (at arr %)) (set (keys dists))))]
+    (vec (filter #(vertex %) (clockwise-all arr dists)))))
 
 (defn det
   [[r1 c1] [r2 c2]]
@@ -190,6 +195,12 @@
       (apply + $)
       (abs $)
       (/ $ 2))))
+
+#_(defn part2
+  [arr dists]
+  (show arr)
+  (let [cw (clockwise arr dists)]
+    cw))
 
 (let [arr (as-> demo0 #_(slurp "10.txt") $
                 (apply str (map char->pipe $))
