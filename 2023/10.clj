@@ -179,16 +179,16 @@
                          circuit-neighbors))]
           (recur next-x (conj visited x) (conj cw x)))))))
 
-(defn clockwise-vertexes
+#_(defn clockwise-vertexes
   [arr dists]
   (let [vertex? (vertexes arr (set (filter #(#{\╚ \╝ \╗ \╔} (at arr %)))))]
     (vec (filter #(vertex? %) (clockwise-all arr dists)))))
 
-(defn det
+#_(defn det
   [[r1 c1] [r2 c2]]
   (- (* r1 c2) (* r2 c1)))
 
-#_(defn part2
+#_(defn part2-shoelace
   [arr dists]
   (show arr)
   (let [cw (clockwise-vertexes arr dists)]
@@ -201,24 +201,30 @@
       (/ $ 2))))
 
 (defn inside-coord
-  [at-coord next-coord]
-  (let [[r c] at-coord
-        d (direction at-coord next-coord)
+  [[curr-coord next-coord]]
+  (let [[r c] curr-coord
+        d (direction curr-coord next-coord)
         offsets {:n [0 +1] :e [+1 0] :s [0 -1] :w [-1 0]}
         offset (offsets d)]
     [(+ r (offset 0)) (+ c (offset 1))]))
+
+#_(defn part2
+  [arr dists]
+  (show arr)
+  (let [circuit (set (keys dists))
+        cw (clockwise-all arr dists)]
+    (set (remove nil? (remove circuit (map inside-coord (map vector cw (rest cw))))))))
 
 (defn part2
   [arr dists]
   (show arr)
   (let [circuit (set (keys dists))
         cw (clockwise-all arr dists)]
-    (set
-      (remove nil?
-              (for [[p1 p2] (map vector cw (rest cw))]
-                (let [ic (inside-coord p1 p2)]
-                  (when-not (circuit ic)
-                    ic)))))))
+    (->> (map vector cw (rest cw))
+         (map inside-coord)
+         (remove circuit)
+         (remove nil?)
+         set)))
 
 (let [arr (as-> demo0 #_(slurp "10.txt") $
                 (apply str (map char->pipe $))
