@@ -2,10 +2,6 @@
          '[clojure.set :refer [intersection union]]
          '[clojure.string :as s])
 
-(def dirs [:n :e :s :w])
-(def offsets (zipmap dirs [[-1 0] [0 +1] [+1 0] [0 -1]]))
-(def pipes [\║ \═ \╚ \╝ \╗ \╔])
-
 (def fittings
   {\║ {:n #{\║ \╗ \╔} :e #{        } :s #{\║ \╚ \╝} :w #{        }}
    \═ {:n #{        } :e #{\═ \╝ \╗} :s #{        } :w #{\═ \╚ \╔}}
@@ -14,75 +10,19 @@
    \╗ {:n #{        } :e #{        } :s #{\║ \╚ \╝} :w #{\═ \╚ \╔}}
    \╔ {:n #{        } :e #{\═ \╝ \╗} :s #{\║ \╚ \╝} :w #{        }}})
 
+(def dirs [:n :e :s :w])
+(def offsets (zipmap dirs [[-1 0] [0 +1] [+1 0] [0 -1]]))
+(def pipes [\║ \═ \╚ \╝ \╗ \╔])
+
+(declare cols coords->neighbors direction rows vertexes)
+
 (defn at [arr [r c]] (try (aget arr r c) (catch Exception _ \.)))
+(defn cells [arr] (cartesian-product (range (rows arr)) (range (cols arr))))
 (defn char->pipe [c] (or (get (zipmap [\| \- \L \J \7 \F] pipes) c) c))
 (defn cols [arr] (alength (aget arr 0)))
-(defn rows [arr] (alength arr))
+(defn det [[r1 c1] [r2 c2]] (- (* r1 c2) (* r2 c1)))
 (defn fits? [c con dir] (((fittings c) dir) con))
-(defn cells [arr] (cartesian-product (range (rows arr)) (range (cols arr))))
-
-(defn coords->neighbors
-  [coords]
-  (for [dir dirs]
-    (let [offset (offsets dir) [r c] coords]
-      [(+ r (get offset 0)) (+ c (get offset 1))])))
-
-(defn coords->neighor-at
-  [arr coords]
-  (map (partial at arr) (coords->neighbors coords)))
-
-(defn plausible-neighbors
-  [pipe neighbors]
-  (apply union (map #(intersection ((fittings pipe) %) (set [(neighbors %)])) dirs)))
-
-(defn s->coords
-  [arr]
-  (->> (cells arr)
-       (filter #(= \S (at arr %)))
-       first
-       (apply vector)))
-
-(defn s->pipe
-  [arr s]
-  (let [neighbors (zipmap dirs (coords->neighor-at arr s))]
-    (->> pipes
-         (map #(vector % (plausible-neighbors % neighbors)))
-         (filter #(= 2 (count (last %))))
-         first
-         first)))
-
-(defn neighbors-to-visit
-  [arr x dists]
-  (remove nil?
-          (for [dir dirs]
-            (let [offset (offsets dir)
-                  coords [(+ (first x) (first offset))
-                          (+ (last x) (last offset))]]
-              (when (and (fits? (at arr x) (at arr coords) dir)
-                         (or (not (dists coords)) (> (dists coords) (inc (dists x)))))
-                coords)))))
-
-(defn score-cells
-  [arr s]
-  (loop [dists {s 0} queue (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
-    (if (empty? queue)
-      dists
-      (let [x (peek queue)
-            visit (neighbors-to-visit arr x dists)]
-        (recur (merge dists (zipmap visit (repeat (inc (dists x)))))
-               (apply conj (pop queue) visit))))))
-
-(defn direction
-  [[r1 c1] [r2 c2]]
-  (cond
-    (> r1 r2) :n
-    (> c2 c1) :e
-    (> r2 r1) :s
-    (> c1 c2) :w))
-
-(defn vertexes
-  [arr circuit]
-  (filter #(#{\╚ \╝ \╗ \╔} (at arr %)) circuit))
+(defn rows [arr] (alength arr))
 
 (defn clockwise-all
   [arr dists]
@@ -103,9 +43,68 @@
   [arr dists]
   (vertexes arr (clockwise-all arr dists)))
 
-(defn det
+(defn coords->neighbors
+  [coords]
+  (for [dir dirs]
+    (let [offset (offsets dir) [r c] coords]
+      [(+ r (get offset 0)) (+ c (get offset 1))])))
+
+(defn coords->neighbors-at
+  [arr coords]
+  (map (partial at arr) (coords->neighbors coords)))
+
+(defn direction
   [[r1 c1] [r2 c2]]
-  (- (* r1 c2) (* r2 c1)))
+  (cond
+    (> r1 r2) :n
+    (> c2 c1) :e
+    (> r2 r1) :s
+    (> c1 c2) :w))
+
+(defn neighbors-to-visit
+  [arr x dists]
+  (remove nil?
+          (for [dir dirs]
+            (let [offset (offsets dir)
+                  coords [(+ (first x) (first offset))
+                          (+ (last x) (last offset))]]
+              (when (and (fits? (at arr x) (at arr coords) dir)
+                         (or (not (dists coords)) (> (dists coords) (inc (dists x)))))
+                coords)))))
+
+(defn plausible-neighbors
+  [pipe neighbors]
+  (apply union (map #(intersection ((fittings pipe) %) (set [(neighbors %)])) dirs)))
+
+(defn s->coords
+  [arr]
+  (->> (cells arr)
+       (filter #(= \S (at arr %)))
+       first
+       (apply vector)))
+
+(defn s->pipe
+  [arr s]
+  (let [neighbors (zipmap dirs (coords->neighbors-at arr s))]
+    (->> pipes
+         (map #(vector % (plausible-neighbors % neighbors)))
+         (filter #(= 2 (count (last %))))
+         first
+         first)))
+
+(defn score-cells
+  [arr s]
+  (loop [dists {s 0} queue (reduce conj clojure.lang.PersistentQueue/EMPTY [s])]
+    (if (empty? queue)
+      dists
+      (let [x (peek queue)
+            visit (neighbors-to-visit arr x dists)]
+        (recur (merge dists (zipmap visit (repeat (inc (dists x)))))
+               (apply conj (pop queue) visit))))))
+
+(defn vertexes
+  [arr circuit]
+  (filter #(#{\╚ \╝ \╗ \╔} (at arr %)) circuit))
 
 (defn part1
   [dists]
