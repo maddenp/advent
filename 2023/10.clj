@@ -156,18 +156,18 @@
 (defn part2
   [arr dists]
   (show arr)
-  #_(flush) ; FIXME
   (let [circuit (set (keys dists))
         vertexes (set (filter #(#{\╚ \╝ \╗ \╔} (at arr %)) circuit))
         s (first (sort-by second vertexes))]
-    #_(print (at arr s) "-> ")
     (loop [x s visited #{} clockwise []]
       (if (= (count visited) (count circuit))
         clockwise
         (let [circuit-neighbors (filter #(circuit %) (coords->neighbors x))
-              
-              next-x (first (filter #(and (not (visited %)) (seq ((fittings (at arr x)) (direction x %)))) circuit-neighbors))]
-          #_(print (at arr next-x) "-> ") (flush)
+              next-x (first
+                       (filter
+                         #(and (not (visited %))
+                               (seq ((fittings (at arr x)) (direction x %))))
+                         circuit-neighbors))]
           (recur next-x (conj visited x) (conj clockwise x)))))))
 
 (let [arr (as-> demo1 #_(slurp "10.txt") $
@@ -178,5 +178,3 @@
   (aset arr (first s) (last s) (s->pipe arr s))
   (let [dists (score-cells arr s)]
     (println #_(part1 dists) (part2 arr dists))))
-
-#_(count (filter #(and (not= \newline %) (not= \. %)) demo))
