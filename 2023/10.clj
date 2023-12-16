@@ -162,12 +162,12 @@
 
 (defn vertexes
   [arr circuit]
-  (set (filter #(#{\╚ \╝ \╗ \╔} (at arr %)) circuit)))
+  (filter #(#{\╚ \╝ \╗ \╔} (at arr %)) circuit))
 
 (defn clockwise-all
   [arr dists]
   (let [circuit (set (keys dists))
-        s (first (sort-by second (vertexes arr circuit)))]
+        s (first (sort-by second (set (vertexes arr circuit))))]
     (loop [x s visited #{} cw []]
       (if (= (count visited) (count circuit))
         cw
@@ -179,42 +179,72 @@
                          circuit-neighbors))]
           (recur next-x (conj visited x) (conj cw x)))))))
 
-#_(defn clockwise-vertexes
+(defn clockwise-vertexes
   [arr dists]
-  (let [vertex? (vertexes arr (set (filter #(#{\╚ \╝ \╗ \╔} (at arr %)))))]
-    (vec (filter #(vertex? %) (clockwise-all arr dists)))))
+  (vertexes arr (clockwise-all arr dists)))
 
-#_(defn det
+(defn det
   [[r1 c1] [r2 c2]]
   (- (* r1 c2) (* r2 c1)))
 
-#_(defn part2-shoelace
+(defn part2-shoelace
   [arr dists]
-  (show arr)
-  (let [cw (clockwise-vertexes arr dists)]
-    (as-> (first cw) $
-      (conj cw $)
-      (map vector $ (rest $))
-      (map #(det (first %) (last %)) $)
-      (apply + $)
-      (abs $)
-      (/ $ 2))))
+  (let [b (count (clockwise-all arr dists))
+        cwv (vec (clockwise-vertexes arr dists))
+        A (as-> (first cwv) $
+            (conj cwv $)
+            (map vector $ (rest $))
+            (map #(det (first %) (last %)) $)
+            (apply + $)
+            (abs $)
+            (/ $ 2))]
+    (+ (- A (/ b 2)) 1)))
+
+; \║ \═ \╚ \╝ \╗ \╔
+
+;; (defn look
+;;   [arr curr-coord next-coord]
+;;   (let [n [-1 0] e [0 +1] s [+1 0] w [0 -1] x [0 0]
+;;         cc (at arr curr-coord) nc (at arr next-coord)
+;;         d (direction curr-coord next-coord)
+;;         offset (cond
+;;                  (= cc \║) ({:n [] :s [w]} d)
+;;                  (= cc \═) ({:e [s] :w []} d)
+;;                  (= cc \╚) ({:n [] :e [s w]} d)
+;;                  (= cc \╝) ({:n [e s] :w []} d)
+;;                  (= cc \╗) ({:s [x] :w [n e]} d)
+;;                  (= cc \╔) ({:s [] :e [x]} d)
+
+;; (defn look
+;;   [arr coord last]
+;;   (let [c (at arr coord)]
+;;     (if (nil? pointing)
+;;       ({\║ [:e] \╚ [:n :e] \╔ [:e :s]} c)
+;;       (cond
+;;         (= c \║) ({[:s :w] [:w   ] [:w   ] [:w   ]} last)
+;;         (= c \═) ({[:e :s] [:s   ] [:s :w] [:s   ]} last)
+;;         (= c \╚) ({[:s :w] [:s :w] [:w   ] [:s :w]} last)
+;;         (= c \╝) ({[:s   ] [:e :s] [:s :w] [:e :s]} last)
+;;         (= c \╗) ({[:e :s] [:s :w] [:s   ] [:s :w]} last)
+;;         (= c \╔) ({[:e :s] [:e :s]} last)
 
 (defn inside-coord
-  [[curr-coord next-coord]]
+  #_[[curr-coord next-coord]]
+  [arr [curr-coord next-coord]]
   (let [[r c] curr-coord
         d (direction curr-coord next-coord)
         offsets {:n [0 +1] :e [+1 0] :s [0 -1] :w [-1 0]}
         offset (offsets d)]
+    (println "@@@" "r" r "c" c "curr" curr-coord (at arr curr-coord) "next" next-coord (at arr next-coord) "direction" d "offset" offset)
     [(+ r (offset 0)) (+ c (offset 1))]))
 
 (defn inside-coords-circuit-adjacent
   [arr dists]
-  #_(show arr)
   (let [circuit (set (keys dists))
         cw (clockwise-all arr dists)]
     (->> (map vector cw (rest cw))
-         (map inside-coord)
+         #_(map inside-coord)
+         (map (partial inside-coord arr))
          (remove circuit)
          (remove nil?)
          set)))
@@ -231,13 +261,25 @@
 
 (defn part2
   [arr dists]
-  (count (inside-all arr dists)))
+  (show arr)
+  #_(count (inside-all arr dists)))
 
-(let [arr (as-> demo2 #_(slurp "10.txt") $
+#_(defn part2
+  [arr dists]
+  (let [circuit (set (keys dists))]
+    (doseq [[r c] (cartesian-product (range (rows arr)) (range (cols arr)))]
+      (when (not (circuit [r c]))
+        (aset arr r c \.)))
+    #_(show arr)
+    (doseq [[r c] (inside-all arr dists)]
+      (aset arr r c \*))
+    (show arr)))
+
+(let [arr (as-> #_demo2 (slurp "10.txt") $
                 (apply str (map char->pipe $))
                 (s/split $ #"\n")
                 (to-array-2d $))
       s (s->coords arr)]
   (aset arr (first s) (last s) (s->pipe arr s))
   (let [dists (score-cells arr s)]
-    (println #_(part1 dists) (part2 arr dists))))
+    (println (part1 dists) (part2-shoelace arr dists))))
