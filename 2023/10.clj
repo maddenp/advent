@@ -179,17 +179,10 @@
   [[r1 c1] [r2 c2]]
   (- (* r1 c2) (* r2 c1)))
 
-#_(defn part2
-  [arr dists]
-  (show arr)
-  (let [cw (clockwise arr dists)]
-    (apply + (map #(det (first %) (last %)) (conj (vec (partition 2 cw)) [(last cw) (first cw)])))))
-
 (defn part2
   [arr dists]
   (show arr)
-  #_(println (rows arr) (cols arr) (count dists))
-  (let [cw #_(clockwise arr dists) #_[[1 6] [8 5] [4 4] [7 2] [3 1]] [[3 1] [1 1] [1 3] [3 3]]]
+  (let [cw (clockwise arr dists)]
     (as-> (first cw) $
       (conj cw $)
       (map vector $ (rest $))
