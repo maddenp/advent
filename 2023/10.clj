@@ -143,7 +143,7 @@
         candidates (difference (set (cells arr)) circuit)]
     (outside? arr circuit [2 2])))
 
-(def possible-directions
+#_(def possible-directions
   (apply hash-map
          (interleave pipes [#{:n :s}
                             #{:e :w}
@@ -210,7 +210,7 @@
 
 (defn inside-coords-circuit-adjacent
   [arr dists]
-  (show arr)
+  #_(show arr)
   (let [circuit (set (keys dists))
         cw (clockwise-all arr dists)]
     (->> (map vector cw (rest cw))
@@ -224,12 +224,8 @@
   (let [circuit (set (keys dists))
         icca (inside-coords-circuit-adjacent arr dists)]
     (loop [check icca inside icca]
-      (println "@@@" "check" check "inside" inside)
-      #_(read-line)
       (if (seq check)
         (let [new (filter #(not (or (circuit %) (inside %))) (coords->neighbors (first check)))]
-          (println "+++" "new" new)
-          #_(read-line)
           (recur (apply conj (rest check) new) (apply conj inside new)))
         inside))))
 
