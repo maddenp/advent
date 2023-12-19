@@ -1,4 +1,4 @@
-(require '[clojure.math.combinatorics :refer [cartesian-product]]
+(require '[clojure.math.combinatorics :refer [combinations]]
          '[clojure.string :as s])
 
 (defn cols [arr] (alength (aget arr 0)))
@@ -22,6 +22,21 @@
                          ".......#.."
                          "#...#....."]))
 
+(defn expand
+  [image]
+  (s/replace image #"(^|\n)(\.+\n)" "\n$2$2"))
+
+(defn galaxies
+  [image]
+  (for [[r row] (map-indexed vector (s/split image #"\n"))
+        [c sym] (map-indexed vector row)
+        :when (= sym \#)]
+    [r c]))
+
+(defn manhattan-distance
+  [[r1 c1] [r2 c2]]
+  (+ (abs (- r1 r2)) (abs (- c1 c2))))
+
 (defn transpose
   [s]
   (->> (s/split s #"\n")
@@ -30,13 +45,13 @@
        (map #(apply str %))
        (s/join "\n")))
 
-(defn expand [s] (s/replace s #"(^|\n)(\.+\n)" "\n$2$2"))
-
-(println (as-> input #_(slurp "11.txt") $
-               (expand $)
-               (transpose $)
-               (expand $)
-               (transpose $)
-               #_(to-array-2d $)
-               #_(show $)
-               ))
+(println
+  (as-> input #_(slurp "11.txt") $
+        (expand $)
+        (transpose $)
+        (expand $)
+        (transpose $)
+        (galaxies $)
+        (combinations $ 2)
+        (map (fn [[g1 g2]] (manhattan-distance g1 g2)) $)
+        (apply + $)))
