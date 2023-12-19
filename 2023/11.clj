@@ -46,7 +46,7 @@
        (s/join "\n")))
 
 (println
-  (as-> input #_(slurp "11.txt") $
+  (as-> #_input (slurp "11.txt") $
         (expand $)
         (transpose $)
         (expand $)
