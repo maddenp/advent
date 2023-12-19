@@ -1,16 +1,6 @@
 (require '[clojure.math.combinatorics :refer [combinations]]
          '[clojure.string :as s])
 
-(defn cols [arr] (alength (aget arr 0)))
-(defn rows [arr] (alength arr))
-
-(defn show
-  [arr]
-  (doseq [row (range (rows arr))]
-    (doseq [col (range (cols arr))]
-      (print (aget arr row col)))
-    (println)))
-
 (def input (s/join "\n" ["...#......"
                          ".......#.."
                          "#........."
@@ -45,8 +35,9 @@
        (map #(apply str %))
        (s/join "\n")))
 
-(println
-  (as-> #_input (slurp "11.txt") $
+(defn part1
+  [input]
+  (as-> input $
         (expand $)
         (transpose $)
         (expand $)
@@ -55,3 +46,6 @@
         (combinations $ 2)
         (map (fn [[g1 g2]] (manhattan-distance g1 g2)) $)
         (apply + $)))
+
+(let [input #_input (slurp "11.txt")]
+  (println (part1 input) #_(part2 input)))
