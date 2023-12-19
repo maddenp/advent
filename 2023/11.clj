@@ -3,17 +3,6 @@
 
 (declare lines)
 
-(def input (s/join "\n" ["...#......"
-                         ".......#.."
-                         "#........."
-                         ".........."
-                         "......#..."
-                         ".#........"
-                         ".........#"
-                         ".........."
-                         ".......#.."
-                         "#...#....."]))
-
 (defn expand
   [image]
   (s/replace image #"(^|\n)(\.+\n)" "\n$2$2"))
@@ -64,9 +53,9 @@
         rdist (mapv dist (lines image))
         cdist (mapv dist (lines (transpose image)))
         gs (->> image galaxies sort pairs)]
-    (apply + (for [[[r1 c1] [r2 c2]] gs]
-               (apply + (flatten [(map #(rdist %) (walk r1 r2))
-                                  (map #(cdist %) (walk c1 c2))]))))))
+    (apply + (flatten (for [[[r1 c1] [r2 c2]] gs]
+                        [(map #(rdist %) (walk r1 r2))
+                         (map #(cdist %) (walk c1 c2))])))))
 
-(let [input #_input (slurp "11.txt")]
-  (println #_(part1 input) (part2 input)))
+(let [input (slurp "11.txt")]
+  (println (part1 input) (part2 input)))
