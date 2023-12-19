@@ -47,5 +47,12 @@
         (map (fn [[g1 g2]] (manhattan-distance g1 g2)) $)
         (apply + $)))
 
-(let [input #_input (slurp "11.txt")]
-  (println (part1 input) #_(part2 input)))
+(defn part2
+  [input]
+  (let [blanks (fn [x] (count (filter #(re-matches #"^\.+$" %) (s/split x #"\n"))))
+        blank-rows (blanks input)
+        blank-cols (blanks (transpose input))]
+    blank-cols))
+
+(let [input input #_(slurp "11.txt")]
+  (println #_(part1 input) (part2 input)))
