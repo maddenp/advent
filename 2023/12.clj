@@ -10,10 +10,10 @@
 (defn f
   [springs groups]
   (println "@@@" springs groups)
-  (read-line)
+  #_(read-line)
   (let [fs (first springs) rs (rest springs) fg (first groups) rg (rest groups)]
     (if (empty? springs)
-      (if (= fg 0)
+      (if (or (nil? fg) (= fg 0))
         (do (println "groups empty, returning 1") 1)
         (do (println "springs empty, returning 0") 0))
       (if (= fg 0)
@@ -37,4 +37,4 @@
     (f springs groups)))
 
 (let [records (s/split input #"\n")]
-  (println (one (first records))))
+  (println (one (nth records 5))))
