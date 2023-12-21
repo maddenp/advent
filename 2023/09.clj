@@ -18,8 +18,7 @@
   [histories]
   (apply + (map extrapolate (map reverse histories))))
 
-(let [input (slurp "09.txt")
-      histories (as-> input $
+(let [histories (as-> (slurp "09.txt") $
                   (s/split $ #"\n")
                   (map #(s/split % #"\s+" ) $)
                   (map #(map (fn [x] (Long/parseLong x)) %) $))]
