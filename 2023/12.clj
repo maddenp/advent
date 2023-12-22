@@ -17,8 +17,8 @@
       (if (= fg 0)
         (if (or (= fs \.) (= fs \?)) (f rs rg false (str line ".")) 0)
         (cond (= fs \?)
-              (+ (if run 0 (operational))
-                 (if fg (damaged) 0))
+              (+ (if run 0 (operational)) ; try .
+                 (if fg (damaged) 0)) ; try #
               (= fs \.)
               (if run 0 (operational))
               (= fs \#)
