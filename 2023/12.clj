@@ -13,9 +13,9 @@
         damaged #(f rs (apply conj [(dec fg)] rg) true)
         operational #(f rs groups false)]
     (if (empty? springs)
-      (if (or (nil? fg) (= groups [0])) 1 0)
+      (if (case groups ([0] []) :y nil) 1 0)
       (if (= fg 0)
-        (if (case fs (\. \?) true nil) (f rs rg false) 0)
+        (if (case fs (\. \?) :y nil) (f rs rg false) 0)
         (case fs
           \# (if fg (damaged) 0)
           \. (if run 0 (operational))
