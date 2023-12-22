@@ -10,16 +10,16 @@
 (defn f
   [springs groups run]
   (let [fs (first springs) rs (rest springs) fg (first groups) rg (rest groups)
-        hash #(f rs (apply conj [(dec fg)] rg) true)
-        dot #(f rs groups false)]
+        hash #(if fg (f rs (apply conj [(dec fg)] rg) true) 0)
+        dot #(if run 0 (f rs groups false))]
     (if (empty? springs)
       (case groups ([] [0]) 1 0)
       (if (= fg 0)
         (case fs (\. \?) (f rs rg false) 0)
         (case fs
-          \# (if fg (hash) 0)
-          \. (if run 0 (dot))
-          \? (+ (if run 0 (dot)) (if fg (hash) 0)))))))
+          \# (hash)
+          \. (dot)
+          \? (+ (dot) (hash)))))))
 
 (defn one
   [record]
