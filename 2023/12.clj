@@ -9,26 +9,28 @@
 
 (defn f
   [springs groups run line]
-  (println "@@@" springs groups (str \" line \"))
+  #_(println "@@@" springs groups run (str \" line \"))
   #_(read-line)
   (let [fs (first springs) rs (rest springs) fg (first groups) rg (rest groups)]
     (if (empty? springs)
       (if (or (nil? fg) (= groups [0]))
-        (do (println "groups empty, RETURNING 1 FOR" (str \" line \")) (read-line) 1)
-        (do (println "springs empty, returning 0") 0))
+        (do #_(println "groups empty, RETURNING 1 FOR" (str \" line \")) #_(read-line) 1)
+        (do #_(println "springs empty, returning 0") 0))
       (if (= fg 0)
         (if (or (= fs \.) (= fs \?))
-          (do (println "need . " (str "(accepting " fs ")")) (f rs rg false (str line ".")))
-          (do (println "need ." fs "bad returning 0") 0))
+          (do #_(println "need . " (str "(accepting " fs ")")) (f rs rg false (str line ".")))
+          (do #_(println "need ." fs "bad returning 0") 0))
         (cond (= fs \?)
-              (+ (do (println ". branch" springs groups)
+              (+ (do #_(println ". branch" springs groups)
                      (if run 0 (f rs groups false (str line "."))))
-                 (do (println "# branch" springs groups)
+                 (do #_(println "# branch" springs groups)
                      (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0)))
               (= fs \.)
-              (do (println "skipping .") (f rs groups false (str line ".")))
+              (if run
+                (do #_(println ". breaks run returning 0") 0)
+                (do #_(println "skipping .") (f rs groups false (str line "."))))
               (= fs \#)
-              (do (println "matching #") (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0))
+              (do #_(println "matching #") (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0))
               )))))
 #_(def f
   (memoize (fn
@@ -63,9 +65,9 @@
         groups (map #(Long/parseLong %) (s/split b #","))]
     (f springs groups false "")))
 
-#_(let [records (s/split #_input (slurp "12.txt") #"\n")]
-  (println (apply + (map one records))))
 (let [records (s/split #_input (slurp "12.txt") #"\n")]
+  (println (apply + (map one records))))
+#_(let [records (s/split #_input (slurp "12.txt") #"\n")]
   (println (one (nth records 4)))
   #_(doseq [record records]
     (println record (one record))
