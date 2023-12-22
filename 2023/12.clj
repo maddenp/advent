@@ -24,13 +24,19 @@
   (let [[a b] (s/split record #"\s")]
     [(vec a) (map #(Long/parseLong %) (s/split b #","))]))
 
+(defn unfold
+  [record]
+  (let [[springs groups] (springs-groups record)]
+    [(flatten (interpose \? (repeat 5 springs)))
+     (flatten (repeat 5 groups))]))
+
 (defn part1
   [records]
   (apply + (map #(apply f false (springs-groups %)) records)))
 
 (defn part2
   [records]
-  (first records))
+  (apply + (map #(apply f false (unfold %)) records)))
 
 (let [records (s/split #_input (slurp "12.txt") #"\n")]
-  (println (part1 records) #_(part2 records)))
+  (println #_(part1 records) (part2 records)))
