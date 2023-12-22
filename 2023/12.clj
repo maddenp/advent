@@ -1,12 +1,5 @@
 (require '[clojure.string :as s])
 
-(def input (s/join "\n" ["???.### 1,1,3"
-                         ".??..??...?##. 1,1,3"
-                         "?#?#?#?#?#?#?#? 1,3,1,6"
-                         "????.#...#... 4,1,1"
-                         "????.######..#####. 1,6,5"
-                         "?###???????? 3,2,1"]))
-
 (def f
   (memoize
     (fn [run springs groups]
@@ -38,5 +31,5 @@
   [records]
   (apply + (map #(apply f false (unfold %)) records)))
 
-(let [records (s/split #_input (slurp "12.txt") #"\n")]
-  (println #_(part1 records) (part2 records)))
+(let [records (s/split (slurp "12.txt") #"\n")]
+  (println (part1 records) (part2 records)))
