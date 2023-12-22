@@ -16,13 +16,12 @@
       (if (or (nil? fg) (= groups [0])) 1 0)
       (if (= fg 0)
         (if (or (= fs \.) (= fs \?)) (f rs rg false (str line ".")) 0)
-        (cond (= fs \?)
-              (+ (if run 0 (operational)) ; try .
-                 (if fg (damaged) 0)) ; try #
+        (cond (= fs \#)
+              (if fg (damaged) 0)
               (= fs \.)
-              (if run 0 (operational))
-              (= fs \#)
-              (if fg (damaged) 0))))))
+              (if run 0 (operational))(= fs \?)
+              (+ (if run 0 (operational))
+                 (if fg (damaged) 0)))))))
 
 (defn one
   [record]
