@@ -14,20 +14,15 @@
       (if (or (nil? fg) (= groups [0])) 1 0)
       (if (= fg 0)
         (if (or (= fs \.) (= fs \?))
-          (do (f rs rg false (str line ".")))
-          (do 0))
+          (f rs rg false (str line "."))
+          0)
         (cond (= fs \?)
-              (+ (do 
-                     (if run 0 (f rs groups false (str line "."))))
-                 (do 
-                     (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0)))
+              (+ (if run 0 (f rs groups false (str line ".")))
+                 (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0))
               (= fs \.)
-              (if run
-                (do  0)
-                (do  (f rs groups false (str line "."))))
+              (if run 0 (f rs groups false (str line ".")))
               (= fs \#)
-              (do  (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0))
-              )))))
+              (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0))))))
 
 (defn one
   [record]
