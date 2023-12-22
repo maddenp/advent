@@ -4,9 +4,7 @@
   [history]
   (if (every? zero? history)
     0
-    (let [h (->> history
-                 (partition 2 1)
-                 (map (fn [[a b]] (- b a))))]
+    (let [h (map (fn [[a b]] (- b a)) (partition 2 1 history))]
       (+ (last history) (extrapolate h)))))
 
 (defn part1
