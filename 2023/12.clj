@@ -8,14 +8,14 @@
                          "?###???????? 3,2,1"]))
 
 (defn f
-  [springs groups run line]
+  [springs groups run]
   (let [fs (first springs) rs (rest springs) fg (first groups) rg (rest groups)
-        damaged #(f rs (apply conj [(dec fg)] rg) true (str line "#"))
-        operational #(f rs groups false (str line "."))]
+        damaged #(f rs (apply conj [(dec fg)] rg) true)
+        operational #(f rs groups false)]
     (if (empty? springs)
       (if (or (nil? fg) (= groups [0])) 1 0)
       (if (= fg 0)
-        (if (case fs (\. \?) true nil) (f rs rg false (str line ".")) 0)
+        (if (case fs (\. \?) true nil) (f rs rg false) 0)
         (case fs
           \# (if fg (damaged) 0)
           \. (if run 0 (operational))
@@ -26,7 +26,7 @@
   (let [[a b] (s/split record #"\s")
         springs (vec a)
         groups (map #(Long/parseLong %) (s/split b #","))]
-    (f springs groups false "")))
+    (f springs groups false)))
 
 (let [records (s/split #_input (slurp "12.txt") #"\n")]
   (println (apply + (map one records))))
