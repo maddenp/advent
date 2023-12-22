@@ -7,16 +7,17 @@
                          "????.######..#####. 1,6,5"
                          "?###???????? 3,2,1"]))
 
-(defn f
-  [springs groups run]
-  (let [fs (first springs) rs (rest springs) fg (first groups) rg (rest groups)
-        hash #(if fg (f rs (apply conj [(dec fg)] rg) true) 0)
-        dot #(if run 0 (f rs groups false))]
-    (case springs
-      [] (case groups ([] [0]) 1 0)
-      (case fg
-        0 (case fs (\. \?) (f rs rg false) 0)
-        (case fs \# (hash) \. (dot) \? (+ (hash) (dot)))))))
+(def f
+  (memoize
+    (fn [springs groups run]
+      (let [fs (first springs) rs (rest springs) fg (first groups) rg (rest groups)
+            hash #(if fg (f rs (apply conj [(dec fg)] rg) true) 0)
+            dot #(if run 0 (f rs groups false))]
+        (case springs
+          [] (case groups ([] [0]) 1 0)
+          (case fg
+            0 (case fs (\. \?) (f rs rg false) 0)
+            (case fs \# (hash) \. (dot) \? (+ (hash) (dot)))))))))
 
 (defn one
   [record]
