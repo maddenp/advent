@@ -11,24 +11,22 @@
   [springs groups run line]
   (let [fs (first springs) rs (rest springs) fg (first groups) rg (rest groups)]
     (if (empty? springs)
-      (if (or (nil? fg) (= groups [0]))
-        (do #_(println "groups empty, RETURNING 1 FOR" (str \" line \")) #_(read-line) 1)
-        (do #_(println "springs empty, returning 0") 0))
+      (if (or (nil? fg) (= groups [0])) 1 0)
       (if (= fg 0)
         (if (or (= fs \.) (= fs \?))
-          (do #_(println "need . " (str "(accepting " fs ")")) (f rs rg false (str line ".")))
-          (do #_(println "need ." fs "bad returning 0") 0))
+          (do (f rs rg false (str line ".")))
+          (do 0))
         (cond (= fs \?)
-              (+ (do #_(println ". branch" springs groups)
+              (+ (do 
                      (if run 0 (f rs groups false (str line "."))))
-                 (do #_(println "# branch" springs groups)
+                 (do 
                      (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0)))
               (= fs \.)
               (if run
-                (do #_(println ". breaks run returning 0") 0)
-                (do #_(println "skipping .") (f rs groups false (str line "."))))
+                (do  0)
+                (do  (f rs groups false (str line "."))))
               (= fs \#)
-              (do #_(println "matching #") (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0))
+              (do  (if fg (f rs (apply conj [(dec fg)] rg) true (str line "#")) 0))
               )))))
 
 (defn one
