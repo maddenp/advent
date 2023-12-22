@@ -4,9 +4,8 @@
   [history]
   (if (every? zero? history)
     0
-    (let [h (->> (rest history)
-                 (interleave history)
-                 (partition 2)
+    (let [h (->> history
+                 (partition 2 1)
                  (map (fn [[a b]] (- b a))))]
       (+ (last history) (extrapolate h)))))
 
