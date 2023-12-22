@@ -16,10 +16,7 @@
       (case groups ([] [0]) 1 0)
       (if (= fg 0)
         (case fs (\. \?) (f rs rg false) 0)
-        (case fs
-          \# (hash)
-          \. (dot)
-          \? (+ (dot) (hash)))))))
+        (case fs \# (hash) \. (dot) \? (+ (hash) (dot)))))))
 
 (defn one
   [record]
