@@ -9,14 +9,14 @@
 
 (def f
   (memoize
-    (fn [springs groups run]
+    (fn [run springs groups]
       (let [fs (first springs) rs (rest springs) fg (first groups) rg (rest groups)
-            hash #(if fg (f rs (apply conj [(dec fg)] rg) true) 0)
-            dot #(if run 0 (f rs groups false))]
+            hash #(if fg (f true rs (apply conj [(dec fg)] rg)) 0)
+            dot #(if run 0 (f false rs groups))]
         (case springs
           [] (case groups ([] [0]) 1 0)
           (case fg
-            0 (case fs (\. \?) (f rs rg false) 0)
+            0 (case fs (\. \?) (f false rs rg) 0)
             (case fs \# (hash) \. (dot) \? (+ (hash) (dot)))))))))
 
 (defn springs-groups
@@ -24,14 +24,9 @@
   (let [[a b] (s/split record #"\s")]
     [(vec a) (map #(Long/parseLong %) (s/split b #","))]))
 
-(defn one
-  [record]
-  (let [[springs groups] (springs-groups record)]
-    (f springs groups false)))
-
 (defn part1
   [records]
-  (apply + (map one records)))
+  (apply + (map #(apply f false (springs-groups %)) records)))
 
 (defn part2
   [records]
