@@ -19,12 +19,23 @@
             0 (case fs (\. \?) (f rs rg false) 0)
             (case fs \# (hash) \. (dot) \? (+ (hash) (dot)))))))))
 
+(defn springs-groups
+  [record]
+  (let [[a b] (s/split record #"\s")]
+    [(vec a) (map #(Long/parseLong %) (s/split b #","))]))
+
 (defn one
   [record]
-  (let [[a b] (s/split record #"\s")
-        springs (vec a)
-        groups (map #(Long/parseLong %) (s/split b #","))]
+  (let [[springs groups] (springs-groups record)]
     (f springs groups false)))
 
+(defn part1
+  [records]
+  (apply + (map one records)))
+
+(defn part2
+  [records]
+  (first records))
+
 (let [records (s/split #_input (slurp "12.txt") #"\n")]
-  (println (apply + (map one records))))
+  (println (part1 records) #_(part2 records)))
