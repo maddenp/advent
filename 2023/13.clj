@@ -50,14 +50,12 @@
 (defn rows
   [pattern]
   (let [lines (s/split pattern #"\n")]
-    (* 100 (+ (fwd lines)
-              (if (= lines (reverse lines)) 0 (rev lines))))))
+    (* 100 (+ (fwd lines) (rev lines)))))
 
 (defn cols
   [pattern]
   (let [lines (s/split (transpose pattern) #"\n")]
-    (+ (fwd lines)
-       (if (= lines (reverse lines)) 0 (rev lines)))))
+    (+ (fwd lines) (rev lines))))
 
 (defn part1
   [patterns]
