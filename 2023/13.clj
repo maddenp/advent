@@ -63,6 +63,6 @@
   [patterns]
   (apply + (map score patterns)))
 
-(let [input input #_(s/split (slurp "13.txt") #"\n")
+(let [input #_input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
   (println (part1 patterns)))
