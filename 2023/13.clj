@@ -47,18 +47,6 @@
         (rev (vec (drop-last 1 lines)))))
     0))
 
-#_(defn f
-  ([lines] (fwd lines 0))
-  ([lines c]
-   (if (seq lines)
-     (let [n (count lines)]
-       (if (= (mod n 2) 0)
-         (if (= (subvec lines 0 (/ n 2)) (reverse (subvec lines (/ n 2))))
-           (+ c (/ n 2))
-           (fwd (vec (drop 2 lines))  (+ c 2)))
-         (fwd (vec (drop 1 lines)) (+ c 1))))
-     0)))
-
 (defn rows
   [pattern]
   (let [lines (s/split pattern #"\n")]
