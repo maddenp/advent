@@ -51,7 +51,7 @@
     (println "rows")
     (pprint lines)
     (* 100 (+ (fwd lines)
-              0 #_(if (= lines (reverse lines)) 0 (rev lines))))))
+              (if (= lines (reverse lines)) 0 (rev lines))))))
 
 (defn cols
   [pattern]
@@ -59,7 +59,7 @@
     (println "cols")
     (pprint lines)
     (+ (fwd lines)
-       0 #_(if (= lines (reverse lines)) 0 (rev lines)))))
+       (if (= lines (reverse lines)) 0 (rev lines)))))
 
 (defn score
   [pattern]
@@ -73,12 +73,6 @@
   [patterns]
   (apply + (map score patterns)))
 
-#_(defn part1
-  [patterns]
-  (doseq [pattern patterns]
-    (println (score pattern))
-    (read-line)))
-
-(let [input #_input (slurp "13.txt")
+(let [input input #_(slurp "13.txt")
       patterns (s/split input #"\n\n")]
   (println (part1 patterns)))
