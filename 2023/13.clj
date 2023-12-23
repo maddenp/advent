@@ -25,20 +25,21 @@
        (s/join "\n")))
 
 (defn fwd
-  [c lines]
-  #_(print c)
-  #_(pprint lines)
-  (if (seq lines)
-    (let [n (count lines)]
-      (if (= (mod n 2) 0)
-        (do #_(print "a") #_(pprint (subvec lines 0 (/ n 2)))
-            #_(print "b") #_(pprint (reverse (subvec lines (/ n 2))))
-            (if (= (subvec lines 0 (/ n 2)) (reverse (subvec lines (/ n 2))))
-              (+ c (/ n 2))
-              (fwd (+ c 2) (vec (drop 2 lines))))
-            )
-        (fwd (+ c 1) (vec (drop 1 lines)))))
-    0))
+  ([lines] (fwd lines 0))
+  ([lines c]
+   #_(print c)
+   #_(pprint lines)
+   (if (seq lines)
+     (let [n (count lines)]
+       (if (= (mod n 2) 0)
+         (do #_(print "a") #_(pprint (subvec lines 0 (/ n 2)))
+             #_(print "b") #_(pprint (reverse (subvec lines (/ n 2))))
+             (if (= (subvec lines 0 (/ n 2)) (reverse (subvec lines (/ n 2))))
+               (+ c (/ n 2))
+               (fwd (vec (drop 2 lines))  (+ c 2)))
+             )
+         (fwd (vec (drop 1 lines)) (+ c 1))))
+     0)))
 
 (defn rev
   [lines]
@@ -62,7 +63,7 @@
   (let [lines (s/split pattern #"\n")]
     #_(println "rows")
     #_(pprint lines)
-    (* 100 (+ (fwd 0 lines)
+    (* 100 (+ (fwd lines)
               (if (= lines (reverse lines)) 0 (rev lines))))))
 
 (defn cols
@@ -70,7 +71,7 @@
   (let [lines (s/split (transpose pattern) #"\n")]
     #_(println "cols")
     #_(pprint lines)
-    (+ (fwd 0 lines)
+    (+ (fwd lines)
        (if (= lines (reverse lines)) 0 (rev lines)))))
 
 (defn score
