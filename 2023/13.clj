@@ -1,4 +1,5 @@
-(require '[clojure.string :as s])
+(require '[clojure.math.combinatorics :refer [combinations]]
+         '[clojure.string :as s])
 
 (def input (s/join "\n" ["#.##..##."
                          "..#.##.#."
@@ -59,6 +60,29 @@
   [patterns]
   (apply + (map #(+ (rows %) (cols %)) patterns)))
 
-(let [input #_input (slurp "13.txt")
+(require '[clojure.pprint :refer [pprint]])
+
+(defn onediff?
+  [pair]
+  (= 1 (->> pair
+            (map vals)
+            flatten
+            (apply map vector)
+            (filter #(apply not= %))
+            count)))
+
+(defn part2
+  [patterns]
+  (for [pattern (rest patterns)]
+    (let [old-score (+ (rows pattern) (cols pattern))
+          lines (s/split pattern #"\n")]
+      (as-> lines $
+        (map-indexed #(hash-map %1 %2) $)
+        (combinations $ 2)
+        (remove #(apply = (vals (apply merge %))) $)
+        (filter onediff? $)))))
+
+(+ 1 1)
+(let [input input #_(slurp "13.txt")
       patterns (s/split input #"\n\n")]
-  (println (part1 patterns)))
+  (println #_(part1 patterns) (part2 patterns)))
