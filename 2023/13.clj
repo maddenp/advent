@@ -16,16 +16,6 @@
                          "..##..###"
                          "#....#..#"]))
 
-#_(def input (s/join "\n" [".#....###"
-                         "#.#######"
-                         "#.#######"
-                         ".#....###"
-                         "..##.#..."
-                         ".###.#.##"
-                         ".#...#.##"
-                         "..####.##"
-                         "...##..#."]))
-
 (defn transpose
   [pattern]
   (->> (s/split pattern #"\n")
@@ -51,8 +41,7 @@
     0))
 
 (defn rev
-  [c lines]
-  #_(print c)
+  [lines]
   #_(pprint lines)
   (if (seq lines)
     (let [n (count lines)]
@@ -61,9 +50,9 @@
             #_(print "b") #_(pprint (reverse (subvec lines (/ n 2))))
             (if (= (subvec lines 0 (/ n 2)) (reverse (subvec lines (/ n 2))))
               (/ n 2)
-              (rev (+ c 2) (vec (drop-last 2 lines))))
+              (rev (vec (drop-last 2 lines))))
             )
-        (rev (+ c 1) (vec (drop-last 1 lines)))))
+        (rev (vec (drop-last 1 lines)))))
     0))
 
 (require '[clojure.pprint :refer [pprint]])
@@ -74,7 +63,7 @@
     #_(println "rows")
     #_(pprint lines)
     (* 100 (+ (fwd 0 lines)
-              (if (= lines (reverse lines)) 0 (rev 0 lines))))))
+              (if (= lines (reverse lines)) 0 (rev lines))))))
 
 (defn cols
   [pattern]
@@ -82,7 +71,7 @@
     #_(println "cols")
     #_(pprint lines)
     (+ (fwd 0 lines)
-       (if (= lines (reverse lines)) 0 (rev 0 lines)))))
+       (if (= lines (reverse lines)) 0 (rev lines)))))
 
 (defn score
   [pattern]
