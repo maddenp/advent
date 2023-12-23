@@ -26,36 +26,34 @@
 
 (defn fwd
   ([lines] (fwd lines 0))
-  ([lines c]
+  ([lines n]
    (if (seq lines)
-     (let [n (count lines)]
-       (if (= (mod n 2) 0)
-         (if (= (subvec lines 0 (/ n 2)) (reverse (subvec lines (/ n 2))))
-           (+ c (/ n 2))
-           (fwd (vec (drop 2 lines))  (+ c 2)))
-         (fwd (vec (drop 1 lines)) (+ c 1))))
+     (let [c (count lines)]
+       (if (= (mod c 2) 0)
+         (if (= (subvec lines 0 (/ c 2)) (reverse (subvec lines (/ c 2))))
+           (+ n (/ c 2))
+           (fwd (vec (drop 2 lines))  (+ n 2)))
+         (fwd (vec (drop 1 lines)) (+ n 1))))
      0)))
 
 (defn rev
   [lines]
   (if (seq lines)
-    (let [n (count lines)]
-      (if (= (mod n 2) 0)
-        (if (= (subvec lines 0 (/ n 2)) (reverse (subvec lines (/ n 2))))
-          (/ n 2)
+    (let [c (count lines)]
+      (if (= (mod c 2) 0)
+        (if (= (subvec lines 0 (/ c 2)) (reverse (subvec lines (/ c 2))))
+          (/ c 2)
           (rev (vec (drop-last 2 lines))))
         (rev (vec (drop-last 1 lines)))))
     0))
 
-(defn rows
-  [pattern]
-  (let [lines (s/split pattern #"\n")]
-    (* 100 (+ (fwd lines) (rev lines)))))
+(defn score
+  [coeff f pattern]
+  (let [lines (s/split (f pattern) #"\n")]
+    (* coeff (+ (fwd lines) (rev lines)))))
 
-(defn cols
-  [pattern]
-  (let [lines (s/split (transpose pattern) #"\n")]
-    (+ (fwd lines) (rev lines))))
+(def rows (partial score 100 identity))
+(def cols (partial score 1 transpose))
 
 (defn part1
   [patterns]
