@@ -47,12 +47,21 @@
 (def fwd (partial f 0 drop))
 (def rev (partial f 0 drop-last))
 
+(defn rows
+  [pattern]
+  (let [lines (s/split pattern #"\n")]
+    (* 100 (+ (fwd lines) (rev lines)))))
+
+(defn cols
+  [pattern]
+  (let [lines (s/split (transpose pattern) #"\n")]
+    (+ (fwd lines) (rev lines))))
+
+(defn score [pattern] (+ (rows pattern) (cols pattern)))
+
 (defn part1
   [patterns]
-  (let [p (last patterns)
-        a (s/split p #"\n")
-        b (s/split (transpose p) #"\n")]
-    (+ (fwd a) (rev a) (fwd b) (rev b))))
+  (apply + (map score patterns)))
 
 (let [input input #_(s/split (slurp "13.txt") #"\n")
       patterns (s/split input #"\n\n")]
