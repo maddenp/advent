@@ -24,10 +24,6 @@
        (map #(apply str %))
        (s/join "\n")))
 
-#_(s/join "\n" (reverse (s/split pattern #"\n")))
-
-(require '[clojure.pprint :refer [pprint]])
-
 (defn f
   [c reject lines]
   #_(print c)
@@ -47,21 +43,41 @@
 (def fwd (partial f 0 drop))
 (def rev (partial f 0 drop-last))
 
+(require '[clojure.pprint :refer [pprint]])
+
 (defn rows
   [pattern]
   (let [lines (s/split pattern #"\n")]
-    (* 100 (+ (fwd lines) (rev lines)))))
+    (println "rows")
+    (pprint lines)
+    (* 100 (+ (fwd lines)
+              0 #_(if (= lines (reverse lines)) 0 (rev lines))))))
 
 (defn cols
   [pattern]
   (let [lines (s/split (transpose pattern) #"\n")]
-    (+ (fwd lines) (rev lines))))
+    (println "cols")
+    (pprint lines)
+    (+ (fwd lines)
+       0 #_(if (= lines (reverse lines)) 0 (rev lines)))))
 
-(defn score [pattern] (+ (rows pattern) (cols pattern)))
+(defn score
+  [pattern]
+  (let [sr (rows pattern)
+        sc (cols pattern)]
+    (println "rows" sr "cols" sc)
+    (read-line)
+    (+ (rows pattern) (cols pattern))))
 
 (defn part1
   [patterns]
   (apply + (map score patterns)))
+
+#_(defn part1
+  [patterns]
+  (doseq [pattern patterns]
+    (println (score pattern))
+    (read-line)))
 
 (let [input #_input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
