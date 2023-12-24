@@ -1,6 +1,8 @@
 (require '[clojure.math.combinatorics :refer [combinations]]
          '[clojure.string :as s])
 
+(require '[clojure.pprint :refer [pprint]]) ; TODO REMOVE
+
 (def input (s/join "\n" ["#.##..##."
                          "..#.##.#."
                          "##......#"
@@ -64,13 +66,12 @@
 (def rows (partial npre 100 identity))
 (def cols (partial npre 1 transpose))
 
-(defn score [pattern] (+ (rows pattern) (cols pattern)))
+#_(defn score [pattern] (+ (rows pattern) (cols pattern)))
+(defn score [pattern] {:rows (rows pattern) :cols (cols pattern)})
 
 (defn part1
   [patterns]
-  (apply + (map score patterns)))
-
-(require '[clojure.pprint :refer [pprint]])
+  (apply + (flatten (map vals (map score patterns)))))
 
 (defn onediff?
   [pair]
