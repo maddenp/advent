@@ -99,13 +99,12 @@
       (filter onediff? $)
       (map #(flatten (map keys %)) $)
       (map #(apply alt-score lines %) $)
-      (into {} $)
-      (vals $)
-      (first $))))
+      (filter #(seq %) $)
+      (if (empty? $) 0 (first (vals (into {} $)))))))
 
 (defn part2
   [patterns]
-  (apply + (map alt patterns)))
+  (apply + (for [pattern patterns] (alt pattern))))
 
 #_(let [input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
