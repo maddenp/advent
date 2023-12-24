@@ -48,17 +48,27 @@
         (rev (vec (drop-last 1 lines)))))
     0))
 
-(defn score
+(defn npre
   [coeff f pattern]
   (let [lines (s/split (f pattern) #"\n")]
     (* coeff (+ (fwd lines) (rev lines)))))
 
-(def rows (partial score 100 identity))
-(def cols (partial score 1 transpose))
+#_(defn npre
+  [coeff f pattern]
+  (let [lines (s/split (f pattern) #"\n")
+        npre-fwd (fwd lines)
+        npre-rev (rev lines)]
+    (println "@@@ npre-fwd" npre-fwd "npre-rev" npre-rev)
+    (* coeff (+ npre-fwd npre-rev))))
+
+(def rows (partial npre 100 identity))
+(def cols (partial npre 1 transpose))
+
+(defn score [pattern] (+ (rows pattern) (cols pattern)))
 
 (defn part1
   [patterns]
-  (apply + (map #(+ (rows %) (cols %)) patterns)))
+  (apply + (map score patterns)))
 
 (require '[clojure.pprint :refer [pprint]])
 
@@ -71,18 +81,39 @@
             (filter #(apply not= %))
             count)))
 
+(defn alt-score-rows
+  [lines j k]
+  (println j "->"  k)
+  (pprint (s/join "\n" lines))
+  (println "--")
+  (let [alt (for [[i line] (map-indexed vector lines)]
+              (if (= i j) (nth lines k) line))]
+    (let [pattern (s/join "\n" alt)
+          s (rows pattern)]
+      (pprint pattern)
+      (println s)
+      s)))
+
+(defn alt-score
+  [lines a b]
+  (println)
+  [(alt-score-rows lines a b) (alt-score-rows lines b a)])
+
 (defn part2
   [patterns]
-  (for [pattern (rest patterns)]
-    (let [old-score (+ (rows pattern) (cols pattern))
+  (for [pattern [(nth patterns 1)]]
+    (let [;old-score (score pattern)
           lines (s/split pattern #"\n")]
       (as-> lines $
         (map-indexed #(hash-map %1 %2) $)
         (combinations $ 2)
         (remove #(apply = (vals (apply merge %))) $)
-        (filter onediff? $)))))
+        (filter onediff? $)
+        (map #(flatten (map keys %)) $)
+        (map #(apply alt-score lines %) $)
+        ))))
 
-(+ 1 1)
-(let [input input #_(slurp "13.txt")
+(let [input #_input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
-  (println #_(part1 patterns) (part2 patterns)))
+  #_(doseq [x (part2 patterns)] (println x))
+  (println (part1 patterns) #_(part2 patterns)))
