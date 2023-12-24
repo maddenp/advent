@@ -110,23 +110,18 @@
 
 (defn part2
   [patterns]
-  (for [pattern [(nth patterns 1)]]
-    (let [lines (s/split pattern #"\n")
-          foo (as-> lines $
-                (map-indexed #(hash-map %1 %2) $)
-                (combinations $ 2)
-                (remove #(apply = (vals (apply merge %))) $)
-                (filter onediff? $)
-                (map #(flatten (map keys %)) $)
-                (map #(apply alt-score lines %) $)
-                (into {} $)
-                (vals $)
-                (first $)
-                #_(set $)
-                #_(first $)
-                )]
-      (println "@@@ foo" foo "!")
-      foo)))
+  (for [pattern [(nth patterns 0)]]
+    (let [lines (s/split pattern #"\n")]
+      (as-> lines $
+        (map-indexed #(hash-map %1 %2) $)
+        (combinations $ 2)
+        (remove #(apply = (vals (apply merge %))) $)
+        (filter onediff? $)
+        (map #(flatten (map keys %)) $)
+        (map #(apply alt-score lines %) $)
+        (into {} $)
+        (vals $)
+        (first $)))))
 
 #_(let [input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
@@ -134,4 +129,4 @@
 
 (let [input input #_(slurp "13.txt")
       patterns (s/split input #"\n\n")]
-  (part2 patterns))
+  (println (part2 patterns)))
