@@ -74,20 +74,15 @@
             (filter #(apply not= %))
             count)))
 
+(defn swap
+  [lines j k]
+  (for [[i line] (map-indexed vector lines)]
+    (if (= i j) (nth lines k) line)))
+
 (defn alt-score-rows
   [old-rows lines j k]
-  #_(println "old-rows" old-rows "|" j "->"  k)
-  #_(pprint (s/join "\n" lines))
-  #_(println "--")
-  (let [alt (for [[i line] (map-indexed vector lines)]
-              (if (= i j) (nth lines k) line))]
-    (let [pattern (s/join "\n" alt)
-          s (rows pattern)]
-      #_(pprint pattern)
-      #_(println "s" s)
-      (let [t (select-keys s (for [[k v] s :when (and (not= v (old-rows k)) (not= 0 v))] k))]
-        #_(println "t" t)
-        t))))
+  (let [s (->> (swap lines j k) (s/join "\n") rows)]
+    (select-keys s (for [[k v] s :when (and (not= v (old-rows k)) (not= 0 v))] k))))
 
 (defn alt-score
   [lines a b]
@@ -96,17 +91,7 @@
     (let [ab (alt-score-rows old-rows lines a b)
           ba (alt-score-rows old-rows lines b a)
           m (merge ab ba)]
-      #_(println "@@@ ab" ab)
-      #_(println "@@@ ba" ba)
-      #_(println "@@@ m" m)
       m)))
-      #_(if (seq m)
-        (->> m
-             vals
-             (filter #(not= % 0))
-             first
-             )
-        m)
 
 (defn part2
   [patterns]
