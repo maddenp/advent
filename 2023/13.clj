@@ -79,19 +79,16 @@
   (for [[i line] (map-indexed vector lines)]
     (if (= i j) (nth lines k) line)))
 
-(defn alt-score-rows
-  [old-rows lines j k]
+(defn alt-score-one
+  [old lines j k]
   (let [s (->> (swap lines j k) (s/join "\n") rows)]
-    (select-keys s (for [[k v] s :when (and (not= v (old-rows k)) (not= 0 v))] k))))
+    (select-keys s (for [[k v] s :when (and (not= v (old k)) (not= 0 v))] k))))
 
 (defn alt-score
   [lines a b]
   (let [pattern (s/join "\n" lines)
-        old-rows (rows pattern)]
-    (let [ab (alt-score-rows old-rows lines a b)
-          ba (alt-score-rows old-rows lines b a)
-          m (merge ab ba)]
-      m)))
+        aso (partial alt-score-one (rows pattern) lines)]
+    (merge (aso a b) (aso b a))))
 
 (defn part2
   [patterns]
