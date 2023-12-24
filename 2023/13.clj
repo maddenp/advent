@@ -104,12 +104,8 @@
 
 (defn part2
   [patterns]
-  (apply + (for [pattern patterns] (alt pattern))))
+  (apply + (for [pattern patterns] (+ (alt pattern) (alt (transpose pattern))))))
 
-#_(let [input (slurp "13.txt")
-      patterns (s/split input #"\n\n")]
-  (println (part1 patterns) #_(part2 patterns)))
-
-(let [input input #_(slurp "13.txt")
+(let [input #_input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
   (println (part2 patterns)))
