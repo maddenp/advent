@@ -1,24 +1,6 @@
 (require '[clojure.math.combinatorics :refer [combinations]]
          '[clojure.string :as s])
 
-(require '[clojure.pprint :refer [pprint]]) ; TODO REMOVE
-
-(def input (s/join "\n" ["#.##..##."
-                         "..#.##.#."
-                         "##......#"
-                         "##......#"
-                         "..#.##.#."
-                         "..##..##."
-                         "#.#.##.#."
-                         ""
-                         "#...##..#"
-                         "#....#..#"
-                         "..##..###"
-                         "#####.##."
-                         "#####.##."
-                         "..##..###"
-                         "#....#..#"]))
-
 (defn transpose
   [pattern]
   (->> (s/split pattern #"\n")
@@ -61,10 +43,6 @@
 (defn score [pattern] {:rows (apply + (vals (rows pattern)))
                        :cols (apply + (vals (cols pattern)))})
 
-(defn part1
-  [patterns]
-  (apply + (flatten (map vals (map score patterns)))))
-
 (defn onediff?
   [pair]
   (= 1 (->> pair
@@ -98,27 +76,18 @@
       (remove #(apply = (vals (apply merge %))) $)
       (filter onediff? $)
       (map #(flatten (map keys %)) $)
-      (do #_(println $)
-          (map #(apply alt-score lines %) $))
+      (map #(apply alt-score lines %) $)
       (filter #(seq %) $)
       (if (empty? $) 0 (first (vals (into {} $)))))))
 
+(defn part1
+  [patterns]
+  (apply + (flatten (map vals (map score patterns)))))
+
 (defn part2
   [patterns]
-  (apply + (for [pattern patterns] (+ (alt pattern) (/ (alt (transpose pattern)) 100)))))
+  (apply + (for [p patterns] (+ (alt p) (/ (alt (transpose p)) 100)))))
 
-#_(defn part2
-  [patterns]
-  (doseq [p patterns]
-    (println "@@@ p")
-    (pprint (s/split p #"\n"))
-    (println (alt rows p))
-    (let [t (transpose p)]
-      (println "@@@ t")
-      (pprint (s/split t #"\n"))
-      (println (alt cols t)))
-    #_(read-line)))
-
-(let [input #_input (slurp "13.txt")
+(let [input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
-  (println (part2 patterns)))
+  (println (part1 patterns) (part2 patterns)))
