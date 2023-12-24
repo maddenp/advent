@@ -53,21 +53,14 @@
 (defn npre
   [coeff f pattern]
   (let [lines (s/split (f pattern) #"\n")]
-    (* coeff (+ (fwd lines) (rev lines)))))
-
-#_(defn npre
-  [coeff f pattern]
-  (let [lines (s/split (f pattern) #"\n")
-        npre-fwd (fwd lines)
-        npre-rev (rev lines)]
-    (println "@@@ npre-fwd" npre-fwd "npre-rev" npre-rev)
-    (* coeff (+ npre-fwd npre-rev))))
+    {:fwd (* coeff (fwd lines)) :rev (* coeff (rev lines))}))
 
 (def rows (partial npre 100 identity))
 (def cols (partial npre 1 transpose))
 
-#_(defn score [pattern] (+ (rows pattern) (cols pattern)))
-(defn score [pattern] {:rows (rows pattern) :cols (cols pattern)})
+#_(defn score [pattern] {:rows (rows pattern) :cols (cols pattern)})
+(defn score [pattern] {:rows (apply + (vals (rows pattern)))
+                       :cols (apply + (vals (cols pattern)))})
 
 (defn part1
   [patterns]
@@ -83,8 +76,8 @@
             count)))
 
 (defn alt-score-rows
-  [lines j k]
-  (println j "->"  k)
+  [old-reflection lines j k]
+  (println "old" old-reflection "|" j "->"  k)
   (pprint (s/join "\n" lines))
   (println "--")
   (let [alt (for [[i line] (map-indexed vector lines)]
@@ -93,28 +86,32 @@
           s (rows pattern)]
       (pprint pattern)
       (println s)
-      s)))
+      (if (= s old-reflection)
+        (do (println "REJECTING OLD" old-reflection) 0)
+        s))))
 
 (defn alt-score
-  [lines a b]
+  [old-score lines a b]
   (println)
-  [(alt-score-rows lines a b) (alt-score-rows lines b a)])
+  [(alt-score-rows (old-score :rows) lines a b) (alt-score-rows (old-score rows) lines b a)])
 
 (defn part2
   [patterns]
   (for [pattern [(nth patterns 1)]]
-    (let [;old-score (score pattern)
-          lines (s/split pattern #"\n")]
+    (let [lines (s/split pattern #"\n")]
       (as-> lines $
         (map-indexed #(hash-map %1 %2) $)
         (combinations $ 2)
         (remove #(apply = (vals (apply merge %))) $)
         (filter onediff? $)
         (map #(flatten (map keys %)) $)
-        (map #(apply alt-score lines %) $)
+        (map #(apply alt-score (score pattern) lines %) $)
         ))))
 
-(let [input #_input (slurp "13.txt")
+(let [input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
-  #_(doseq [x (part2 patterns)] (println x))
   (println (part1 patterns) #_(part2 patterns)))
+
+#_(let [input input #_(slurp "13.txt")
+      patterns (s/split input #"\n\n")]
+  (doseq [x (part2 patterns)] (println x)))
