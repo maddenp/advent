@@ -105,7 +105,7 @@
 
 (defn part2
   [patterns]
-  (apply + (for [pattern patterns] (alt pattern))))
+  (apply + (map alt patterns)))
 
 #_(let [input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
