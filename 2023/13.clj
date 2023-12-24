@@ -98,13 +98,26 @@
       (remove #(apply = (vals (apply merge %))) $)
       (filter onediff? $)
       (map #(flatten (map keys %)) $)
-      (map #(apply alt-score lines %) $)
+      (do #_(println $)
+          (map #(apply alt-score lines %) $))
       (filter #(seq %) $)
       (if (empty? $) 0 (first (vals (into {} $)))))))
 
 (defn part2
   [patterns]
-  (apply + (for [pattern patterns] (+ (alt pattern) (alt (transpose pattern))))))
+  (apply + (for [pattern patterns] (+ (alt pattern) (/ (alt (transpose pattern)) 100)))))
+
+#_(defn part2
+  [patterns]
+  (doseq [p patterns]
+    (println "@@@ p")
+    (pprint (s/split p #"\n"))
+    (println (alt rows p))
+    (let [t (transpose p)]
+      (println "@@@ t")
+      (pprint (s/split t #"\n"))
+      (println (alt cols t)))
+    #_(read-line)))
 
 (let [input #_input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
