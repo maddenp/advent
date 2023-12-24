@@ -86,25 +86,26 @@
 
 (defn alt-score
   [lines a b]
-  (let [pattern (s/join "\n" lines)
-        old-rows (rows pattern)
-        aso (partial alt-score-one old-rows lines)]
+  (let [aso (partial alt-score-one (rows (s/join "\n" lines)) lines)]
     (merge (aso a b) (aso b a))))
+
+(defn alt
+  [pattern]
+  (let [lines (s/split pattern #"\n")]
+    (as-> lines $
+      (map-indexed #(hash-map %1 %2) $)
+      (combinations $ 2)
+      (remove #(apply = (vals (apply merge %))) $)
+      (filter onediff? $)
+      (map #(flatten (map keys %)) $)
+      (map #(apply alt-score lines %) $)
+      (into {} $)
+      (vals $)
+      (first $))))
 
 (defn part2
   [patterns]
-  (apply + (for [pattern patterns]
-             (let [lines (s/split pattern #"\n")]
-               (as-> lines $
-                 (map-indexed #(hash-map %1 %2) $)
-                 (combinations $ 2)
-                 (remove #(apply = (vals (apply merge %))) $)
-                 (filter onediff? $)
-                 (map #(flatten (map keys %)) $)
-                 (map #(apply alt-score lines %) $)
-                 (into {} $)
-                 (vals $)
-                 (first $))))))
+  (apply + (for [pattern patterns] (alt pattern))))
 
 #_(let [input (slurp "13.txt")
       patterns (s/split input #"\n\n")]
