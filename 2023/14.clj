@@ -22,8 +22,6 @@
   [line]
   (let [n (count line)]
     (loop [i 0 x 0 load 0]
-      #_(println "@@@" (get line i) "i" i "x" x "load" load)
-      #_(read-line)
       (if (< i n)
         (let [c (get line i) j (inc i)]
           (cond (= c \O)
