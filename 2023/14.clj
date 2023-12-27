@@ -23,13 +23,11 @@
   (let [n (count line)]
     (loop [i 0 x 0 load 0]
       (if (< i n)
-        (let [c (get line i) j (inc i)]
-          (cond (= c \O)
-                (recur j (inc x) (+ load (- n x)))
-                (= c \#)
-                (recur j j load)
-                :else
-                (recur j x load)))
+        (let [j (inc i)]
+          (case (get line i)
+            \O (recur j (inc x) (+ load (- n x)))
+            \# (recur j j load)
+            (recur j x load)))
         load))))
 
 (defn part1
