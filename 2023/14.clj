@@ -1,16 +1,5 @@
 (require '[clojure.string :as s])
 
-(def input (s/join "\n" ["O....#...."
-                         "O.OO#....#"
-                         ".....##..."
-                         "OO.#O....O"
-                         ".O.....O#."
-                         "O.#..O.#.#"
-                         "..O..#O..O"
-                         ".......O.."
-                         "#....###.."
-                         "#OO..#...."]))
-
 (defn transpose
   [lines]
   (->> lines
@@ -56,8 +45,26 @@
 
 (defn part2
   [input]
+  (println)
+  (println input)
+  (println)
   (let [lines (s/split input #"\n")]
-    (s/join "\n" (transpose (map tilt (transpose lines))))))
+    #_(s/join "\n" (transpose (map tilt (transpose lines)))) ; n
+    #_(s/join "\n" (map tilt lines)) ; w
+    #_(s/join "\n" (reverse (transpose (map tilt (transpose (reverse lines)))))) ; s
+    (s/join "\n" (map #(apply str (reverse %)) (map tilt (map #(apply str (reverse %)) lines)))) ; e
+    ))
+
+(def input (s/join "\n" ["O....#...."
+                         "O.OO#....#"
+                         ".....##..."
+                         "OO.#O....O"
+                         ".O.....O#."
+                         "O.#..O.#.#"
+                         "..O..#O..O"
+                         ".......O.."
+                         "#....###.."
+                         "#OO..#...."]))
 
 (let [input input #_(slurp "14.txt")]
   (println #_(part1 input) (part2 input)))
