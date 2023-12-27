@@ -26,6 +26,11 @@
     (let [[a b] (sort [a b])]
       (str (subs s 0 a) (get s b) (subs s (inc a) b) (get s a) (subs s (inc b))))))
 
+(defn part1
+  [input]
+  (let [lines (transpose (s/split input #"\n"))]
+    (apply + (map weigh lines))))
+
 (defn tilt
   [line]
   (let [n (count line)]
@@ -38,22 +43,28 @@
             (recur j x s)))
         s))))
 
-(defn part1
-  [input]
-  (let [lines (transpose (s/split input #"\n"))]
-    (apply + (map weigh lines))))
+(defn tilt-e
+  [lines]
+  (map #(apply str (reverse %)) (map tilt (map #(apply str (reverse %)) lines))))
+
+(defn tilt-n
+  [lines]
+  (transpose (map tilt (transpose lines))))
+
+(defn tilt-s
+  [lines]
+  (reverse (transpose (map tilt (transpose (reverse lines))))))
+
+(defn tilt-w
+  [lines]
+  (map tilt lines))
+
+(def spin-cycle (comp tilt-e tilt-s tilt-w tilt-n))
 
 (defn part2
   [input]
-  (println)
-  (println input)
-  (println)
   (let [lines (s/split input #"\n")]
-    #_(s/join "\n" (transpose (map tilt (transpose lines)))) ; n
-    #_(s/join "\n" (map tilt lines)) ; w
-    #_(s/join "\n" (reverse (transpose (map tilt (transpose (reverse lines)))))) ; s
-    (s/join "\n" (map #(apply str (reverse %)) (map tilt (map #(apply str (reverse %)) lines)))) ; e
-    ))
+    (apply + (map weigh (nth (iterate spin-cycle lines) 1000000000)))))
 
 (def input (s/join "\n" ["O....#...."
                          "O.OO#....#"
