@@ -1,15 +1,10 @@
 (require '[clojure.string :as s])
 
-(defn transpose
-  [lines]
-  (->> lines
-       (map #(seq (char-array %)))
-       (apply mapv vector)
-       (map #(apply str %))))
+(declare tilt-e tilt-n tilt-s tilt-w transpose)
 
-(defn weigh
-  [line]
-  (apply + (map-indexed #(* (- (count line) %1) (if (= %2 \O) 1 0)) line)))
+(defn spin-cycle
+  [lines]
+  (->> lines tilt-n tilt-w tilt-s tilt-e))
 
 (defn swap
   [s a b]
@@ -46,7 +41,16 @@
   [lines]
   (map tilt lines))
 
-(def spin-cycle (comp tilt-e tilt-s tilt-w tilt-n))
+(defn transpose
+  [lines]
+  (->> lines
+       (map #(seq (char-array %)))
+       (apply mapv vector)
+       (map #(apply str %))))
+
+(defn weigh
+  [line]
+  (apply + (map-indexed #(* (- (count line) %1) (if (= %2 \O) 1 0)) line)))
 
 (defn part1
   [input]
@@ -64,27 +68,5 @@
             (apply + (map weigh (transpose (idx2lines (+ idx0 (dec b)))))))
           (recur next (inc idx) (assoc idx2lines idx next) (assoc lines2idx next idx)))))))
 
-#_(defn part2
-  [input]
-  (let [lines (s/split input #"\n")]
-    (println 0 (apply + (map weigh (transpose lines))))
-    (loop [lines lines idx 1]
-      (let [next (spin-cycle lines)
-            weight (apply + (map weigh (transpose next)))]
-        (println idx weight)
-        (read-line)
-        (recur next (inc idx))))))
-
-(def input (s/join "\n" ["O....#...."
-                         "O.OO#....#"
-                         ".....##..."
-                         "OO.#O....O"
-                         ".O.....O#."
-                         "O.#..O.#.#"
-                         "..O..#O..O"
-                         ".......O.."
-                         "#....###.."
-                         "#OO..#...."]))
-
-(let [input #_input (slurp "14.txt")]
+(let [input (slurp "14.txt")]
   (println (part1 input) (part2 input)))
