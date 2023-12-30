@@ -27,8 +27,8 @@
 
 (defn tilt-e
   [lines]
-  (->> lines (map #(apply str (reverse %))) (map tilt) (map #(apply str (reverse %)))))
-;;   (map #(apply str (reverse %)) (map tilt (map #(apply str (reverse %)) lines))))
+  (let [revstr #(apply str (reverse %))]
+    (->> lines (map revstr) (map tilt) (map revstr))))
 
 (defn tilt-n
   [lines]
@@ -63,9 +63,7 @@
     (loop [lines lines idx 0 idx2lines {} lines2idx {}]
       (let [next (spin-cycle lines)]
         (if-let [idx0 (lines2idx next)]
-          (let [cyclen (- idx idx0)
-                a (- 1000000000 idx0)
-                b (mod a cyclen)]
+          (let [b (mod (- 1000000000 idx0) (- idx idx0))]
             (apply + (map weigh (transpose (idx2lines (+ idx0 (dec b)))))))
           (recur next (inc idx) (assoc idx2lines idx next) (assoc lines2idx next idx)))))))
 
