@@ -62,8 +62,7 @@
   (loop [lines (s/split input #"\n") idx 0 idx2lines {} lines2idx {}]
     (let [next (spin-cycle lines)]
       (if-let [idx0 (lines2idx next)]
-        (let [b (mod (- 1000000000 idx0) (- idx idx0))]
-          (apply + (map weigh (transpose (idx2lines (+ idx0 (dec b)))))))
+        (apply + (map weigh (transpose (idx2lines (+ idx0 (dec (mod (- 1000000000 idx0) (- idx idx0))))))))
         (recur next (inc idx) (assoc idx2lines idx next) (assoc lines2idx next idx))))))
 
 (let [input (slurp "14.txt")]
