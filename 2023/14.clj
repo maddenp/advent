@@ -27,15 +27,16 @@
 
 (defn tilt-e
   [lines]
-  (map #(apply str (reverse %)) (map tilt (map #(apply str (reverse %)) lines))))
+  (->> lines (map #(apply str (reverse %))) (map tilt) (map #(apply str (reverse %)))))
+;;   (map #(apply str (reverse %)) (map tilt (map #(apply str (reverse %)) lines))))
 
 (defn tilt-n
   [lines]
-  (transpose (map tilt (transpose lines))))
+  (->> lines transpose (map tilt) transpose))
 
 (defn tilt-s
   [lines]
-  (reverse (transpose (map tilt (transpose (reverse lines))))))
+  (->> lines reverse transpose (map tilt) transpose reverse))
 
 (defn tilt-w
   [lines]
