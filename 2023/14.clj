@@ -7,7 +7,7 @@
        (apply mapv vector)
        (map #(apply str %))))
 
-(defn weigh
+#_(defn weigh
   [line]
   (let [n (count line)]
     (loop [i 0 x 0 load 0]
@@ -19,16 +19,16 @@
             (recur j x load)))
         load))))
 
+(defn weigh
+  [line]
+  (apply + (map-indexed #(* (- (count line) %1) (if (= %2 \O) 1 0)) line)))
+
 (defn swap
   [s a b]
   (if (= a b)
     s
     (let [[a b] (sort [a b])]
       (str (subs s 0 a) (get s b) (subs s (inc a) b) (get s a) (subs s (inc b))))))
-
-(defn part1
-  [input]
-  (apply + (map weigh (transpose (s/split input #"\n")))))
 
 (defn tilt
   [line]
@@ -60,6 +60,14 @@
 
 (def spin-cycle (comp tilt-e tilt-s tilt-w tilt-n))
 
+#_(defn part1
+  [input]
+  (apply + (map weigh (transpose (s/split input #"\n")))))
+
+(defn part1
+  [input]
+  (apply + (map weigh (transpose (tilt-n (s/split input #"\n"))))))
+
 #_(defn part2
   [input]
   (let [lines (s/split input #"\n")]
@@ -74,18 +82,14 @@
 
 (defn part2
   [input]
-  (apply + (map weigh (transpose (s/split input #"\n"))))
-  #_(let [lines (s/split input #"\n")]
-    (loop [lines lines idx 0]
+  (let [lines (s/split input #"\n")]
+    (println 0 (apply + (map weigh (transpose lines))))
+    (loop [lines lines idx 1]
       (let [next (spin-cycle lines)
             weight (apply + (map weigh (transpose next)))]
         (println idx weight)
-        (if (= weight 64)
-          nil
-          (recur next (inc idx))))))
-  )
-
-;;; (apply + (map weigh (nth (iterate spin-cycle lines) 1000000000)))
+        (read-line)
+        (recur next (inc idx))))))
 
 (def input (s/join "\n" ["O....#...."
                          "O.OO#....#"
@@ -100,5 +104,5 @@
 
 (require '[clojure.pprint :refer [pprint]])
 
-(let [input input #_(slurp "14.txt")]
-  (pprint #_(part1 input) (part2 input)))
+(let [input #_input (slurp "14.txt")]
+  (pprint (part1 input) #_(part2 input)))
