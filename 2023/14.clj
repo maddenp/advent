@@ -28,7 +28,7 @@
 (defn tilt-e
   [lines]
   (let [revstr #(apply str (reverse %))]
-    (->> lines (map revstr) (map tilt) (map revstr))))
+    (map (comp revstr tilt revstr) lines)))
 
 (defn tilt-n
   [lines]
