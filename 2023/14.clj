@@ -58,16 +58,16 @@
   (apply + (map weigh (transpose lines))))
 
 (defn part1
-  [input]
-  (weigh-all (tilt-n (s/split input #"\n"))))
+  [lines]
+  (weigh-all (tilt-n lines)))
 
 (defn part2
-  [input]
-  (loop [lines (s/split input #"\n") i 0 i2l {} l2i {}]
+  [lines]
+  (loop [lines lines i 0 i2l {} l2i {}]
     (let [next (spin-cycle lines)]
       (if-let [i0 (l2i next)]
         (weigh-all (i2l (+ i0 (dec (mod (- 1000000000 i0) (- i i0))))))
         (recur next (inc i) (assoc i2l i next) (assoc l2i next i))))))
 
-(let [input (slurp "14.txt")]
-  (println (part1 input) (part2 input)))
+(let [lines (s/split (slurp "14.txt") #"\n")]
+  (println (part1 lines) (part2 lines)))
