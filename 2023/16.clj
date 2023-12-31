@@ -1,5 +1,7 @@
 (require '[clojure.string :as s])
 
+(def offsets {:n [-1 0] :e [0 +1] :s [+1 0] :w [0 -1]})
+
 (defn cols [a] (alength (aget a 0)))
 (defn rows [a] (alength a))
 
@@ -9,8 +11,6 @@
     (doseq [col (range (cols a))]
       (print (aget a row col)))
     (println)))
-
-(def offsets {:n [-1 0] :e [0 +1] :s [+1 0] :w [0 -1]})
 
 (defn dirs
   [a r c d]
