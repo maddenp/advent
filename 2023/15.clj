@@ -33,15 +33,10 @@
     (loop [steps steps boxes boxes]
       (if (seq steps)
         (let [[label fl] (s/split (first steps) #"[-=]")]
-          #_(println (sort (vec (remove #(empty? (last %)) boxes))) (first steps) (h label) label fl)
-          #_(read-line)
           (if fl
             (recur (rest steps) (lens-ins boxes label fl))
             (recur (rest steps) (lens-rem boxes label))))
-        #_(focusing-power boxes)
         (apply + (flatten (focusing-power boxes)))))))
 
-(require '[clojure.pprint :refer [pprint]])
-
 (let [steps (s/split (s/trim-newline #_input (slurp "15.txt")) #",")]
-  (pprint #_(part1 steps) (part2 steps)))
+  (println (part1 steps) (part2 steps)))
