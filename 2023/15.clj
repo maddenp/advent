@@ -11,7 +11,7 @@
   [boxes label foc-len]
   (let [i (h label) lenses (boxes i)]
     (assoc boxes i (vec (if (some #(= (first %) label) lenses)
-                          (for [lens lenses] (if (= (first lens) label) [label foc-len] lens))
+                          (map #(if (= (first %) label) [label foc-len] %) lenses)
                           (conj lenses [label foc-len]))))))
 
 (defn lens-rem
