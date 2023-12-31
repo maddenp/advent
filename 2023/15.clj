@@ -6,22 +6,25 @@
   [s]
   (reduce #(mod (* 17 (+ %1 %2)) 256) 0 (map int s)))
 
-(defn part1
-  [steps]
-  (apply + (map h steps)))
+(defn focusing-power
+  [boxes]
+  (remove #(empty? (last %)) boxes))
 
-(defn insert-lens
+(defn lens-ins
   [boxes label fl]
   (let [i (h label) lenses (boxes i)]
     (if (some #(= (first %) label) lenses)
       (assoc boxes i (for [lens lenses] (if (= (first lens) label) [label fl] lens)))
       (assoc boxes i (conj lenses [label fl])))))
 
-(defn remove-lens
+(defn lens-rem
   [boxes label]
-  (println "@@@" label)
   (let [i (h label)]
     (assoc boxes i (vec (remove #(= (first %) label) (boxes i))))))
+
+(defn part1
+  [steps]
+  (apply + (map h steps)))
 
 (defn part2
   [steps]
@@ -29,11 +32,10 @@
     (loop [steps steps boxes boxes]
       (if (seq steps)
         (let [[label fl] (s/split (first steps) #"[-=]")]
-          (do (println "label" label "i" (h label) "fl" fl)
-              (if fl
-                (recur (rest steps) (insert-lens boxes label fl))
-                (recur (rest steps) (remove-lens boxes label)))))
-        (remove #(empty? (last %)) boxes)))))
+          (if fl
+            (recur (rest steps) (lens-ins boxes label fl))
+            (recur (rest steps) (lens-rem boxes label))))
+        (focusing-power boxes)))))
 
 (require '[clojure.pprint :refer [pprint]])
 
