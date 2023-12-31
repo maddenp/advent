@@ -1,7 +1,5 @@
 (require '[clojure.string :as s])
 
-(def input "rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7")
-
 (defn h
   [s]
   (reduce #(mod (* 17 (+ %1 %2)) 256) 0 (map int s)))
@@ -33,10 +31,8 @@
     (loop [steps steps boxes boxes]
       (if (seq steps)
         (let [[label fl] (s/split (first steps) #"[-=]")]
-          (if fl
-            (recur (rest steps) (lens-ins boxes label fl))
-            (recur (rest steps) (lens-rem boxes label))))
+          (recur (rest steps) (if fl (lens-ins boxes label fl) (lens-rem boxes label))))
         (apply + (flatten (focusing-power boxes)))))))
 
-(let [steps (s/split (s/trim-newline #_input (slurp "15.txt")) #",")]
+(let [steps (s/split (s/trim-newline (slurp "15.txt")) #",")]
   (println (part1 steps) (part2 steps)))
