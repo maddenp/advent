@@ -10,11 +10,11 @@
     (map-indexed #(* (inc i) (inc %1) (Integer/parseInt (last %2))) lenses)))
 
 (defn lens-ins
-  [boxes label fl]
+  [boxes label foc-len]
   (let [i (h label) lenses (boxes i)]
-    (if (some #(= (first %) label) lenses)
-      (assoc boxes i (vec (for [lens lenses] (if (= (first lens) label) [label fl] lens))))
-      (assoc boxes i (vec (conj lenses [label fl]))))))
+    (assoc boxes i (vec (if (some #(= (first %) label) lenses)
+                          (for [lens lenses] (if (= (first lens) label) [label foc-len] lens))
+                          (conj lenses [label foc-len]))))))
 
 (defn lens-rem
   [boxes label]
@@ -30,8 +30,8 @@
   (let [boxes (reduce merge (mapv #(hash-map % []) (range 256)))]
     (loop [steps steps boxes boxes]
       (if (seq steps)
-        (let [[label fl] (s/split (first steps) #"[-=]")]
-          (recur (rest steps) (if fl (lens-ins boxes label fl) (lens-rem boxes label))))
+        (let [[label foc-len] (s/split (first steps) #"[-=]")]
+          (recur (rest steps) (if foc-len (lens-ins boxes label foc-len) (lens-rem boxes label))))
         (apply + (flatten (focusing-power boxes)))))))
 
 (let [steps (s/split (s/trim-newline (slurp "15.txt")) #",")]
