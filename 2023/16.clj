@@ -10,14 +10,18 @@
       (print (aget a row col)))
     (println)))
 
+(def offsets {:n [-1 0] :e [0 +1] :s [+1 0] :w [0 -1]})
+
 (defn visit
+  [a r c dirs]
+  (for [d' dirs
+        :let [[dr dc] (offsets d') r' (+ r dr) c' (+ c dc)]
+        :when (and (<= 0 r' (dec (rows a))) (<= 0 c' (dec (cols a))))]
+    [r' c' d']))
+
+(defn q'
   [seen q a r c dirs]
-  (let [offsets {:n [-1 0] :e [0 +1] :s [+1 0] :w [0 -1]}
-        xs (for [d' dirs
-                 :let [[dr dc] (offsets d') r' (+ r dr) c' (+ c dc)]
-                 :when (and (<= 0 r' (dec (rows a))) (<= 0 c' (dec (cols a))))]
-             [r' c' d'])]
-    (apply conj (rest q) (remove #(seen %) xs))))
+  (apply conj (rest q) (remove #(seen %) (visit a r c dirs))))
 
 (defn energize
   [a]
@@ -27,13 +31,13 @@
         (let [[r c d] (first q)]
           (aset energized r c \#)
           (recur (conj seen [r c d])
-                 (visit seen q a r c
-                        (case (aget a r c)
-                          \. [d]
-                          \| (case d :n [:n   ] :e [:n :s] :s [:s   ] :w [:n :s])
-                          \- (case d :n [:e :w] :e [:e   ] :s [:e :w] :w [:w   ])
-                          \/ (case d :n [:e   ] :e [:n   ] :s [:w   ] :w [:s   ])
-                          \\ (case d :n [:w   ] :e [:s   ] :s [:e   ] :w [:n   ])))))
+                 (q' seen q a r c
+                     (case (aget a r c)
+                       \. [d]
+                       \| (case d :n [:n   ] :e [:n :s] :s [:s   ] :w [:n :s])
+                       \- (case d :n [:e :w] :e [:e   ] :s [:e :w] :w [:w   ])
+                       \/ (case d :n [:e   ] :e [:n   ] :s [:w   ] :w [:s   ])
+                       \\ (case d :n [:w   ] :e [:s   ] :s [:e   ] :w [:n   ])))))
         energized))))
 
 (defn part1
