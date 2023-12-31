@@ -8,7 +8,8 @@
 
 (defn focusing-power
   [boxes]
-  (remove #(empty? (last %)) boxes))
+  (for [[i lenses] boxes]
+    (map-indexed #(* (inc i) (inc %1) (Integer/parseInt (last %2))) lenses)))
 
 (defn lens-ins
   [boxes label fl]
@@ -35,9 +36,10 @@
           (if fl
             (recur (rest steps) (lens-ins boxes label fl))
             (recur (rest steps) (lens-rem boxes label))))
-        (focusing-power boxes)))))
+        (focusing-power boxes)
+        #_(apply + (flatten (focusing-power boxes)))))))
 
 (require '[clojure.pprint :refer [pprint]])
 
-(let [steps (s/split (s/trim-newline input #_(slurp "15.txt")) #",")]
+(let [steps (s/split (s/trim-newline #_input (slurp "15.txt")) #",")]
   (pprint #_(part1 steps) (part2 steps)))
