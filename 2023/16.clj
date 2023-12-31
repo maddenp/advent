@@ -23,6 +23,15 @@
   [seen q a r c dirs]
   (apply conj (rest q) (remove #(seen %) (visit a r c dirs))))
 
+(defn dirs
+  [a r c d]
+  (case (aget a r c)
+    \. [d]
+    \| (case d :n [:n   ] :e [:n :s] :s [:s   ] :w [:n :s])
+    \- (case d :n [:e :w] :e [:e   ] :s [:e :w] :w [:w   ])
+    \/ (case d :n [:e   ] :e [:n   ] :s [:w   ] :w [:s   ])
+    \\ (case d :n [:w   ] :e [:s   ] :s [:e   ] :w [:n   ])))
+
 (defn energize
   [a]
   (let [energized (to-array-2d (repeat (rows a) (repeat (cols a) \.)))]
@@ -30,14 +39,7 @@
       (if (seq q)
         (let [[r c d] (first q)]
           (aset energized r c \#)
-          (recur (conj seen [r c d])
-                 (q' seen q a r c
-                     (case (aget a r c)
-                       \. [d]
-                       \| (case d :n [:n   ] :e [:n :s] :s [:s   ] :w [:n :s])
-                       \- (case d :n [:e :w] :e [:e   ] :s [:e :w] :w [:w   ])
-                       \/ (case d :n [:e   ] :e [:n   ] :s [:w   ] :w [:s   ])
-                       \\ (case d :n [:w   ] :e [:s   ] :s [:e   ] :w [:n   ])))))
+          (recur (conj seen [r c d]) (q' seen q a r c (dirs a r c d))))
         energized))))
 
 (defn part1
