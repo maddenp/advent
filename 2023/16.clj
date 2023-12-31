@@ -48,5 +48,5 @@
   [a]
   a)
 
-(let [a (to-array-2d (s/split (slurp "16.tst") #"\n"))]
+(let [a (to-array-2d (s/split (slurp "16.txt") #"\n"))]
   (println (part1 a) #_(part2 a)))
