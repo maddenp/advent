@@ -1,8 +1,6 @@
 (require '[clojure.string :as s])
 
-(defn h
-  [s]
-  (reduce #(mod (* 17 (+ %1 %2)) 256) 0 (map int s)))
+(defn h [s] (reduce #(mod (* 17 (+ %1 %2)) 256) 0 (map int s)))
 
 (defn focusing-power
   [boxes]
@@ -21,9 +19,7 @@
   (let [i (h label)]
     (assoc boxes i (vec (remove #(= (first %) label) (boxes i))))))
 
-(defn part1
-  [steps]
-  (apply + (map h steps)))
+(defn part1 [steps] (apply + (map h steps)))
 
 (defn part2
   [steps]
