@@ -25,11 +25,7 @@
     (loop [seen #{} q (list [0 0 :e])]
       (if (seq q)
         (let [[r c d] (first q) visit (partial enqueue seen q a r c)]
-          #_(show a)
-          #_(println "r" r "c" c "d" d "q" q)
           (aset energized r c \#)
-          #_(show energized)
-          #_(read-line)
           (case (aget a r c)
             \. (recur (conj seen [r c d]) (visit [d]))
             \| (recur (conj seen [r c d]) (visit (case d :n [:n] :e [:n :s] :s [:s] :w [:n :s])))
