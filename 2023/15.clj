@@ -15,8 +15,8 @@
   [boxes label fl]
   (let [i (h label) lenses (boxes i)]
     (if (some #(= (first %) label) lenses)
-      (assoc boxes i (for [lens lenses] (if (= (first lens) label) [label fl] lens)))
-      (assoc boxes i (conj lenses [label fl])))))
+      (assoc boxes i (vec (for [lens lenses] (if (= (first lens) label) [label fl] lens))))
+      (assoc boxes i (vec (conj lenses [label fl]))))))
 
 (defn lens-rem
   [boxes label]
@@ -33,11 +33,13 @@
     (loop [steps steps boxes boxes]
       (if (seq steps)
         (let [[label fl] (s/split (first steps) #"[-=]")]
+          #_(println (sort (vec (remove #(empty? (last %)) boxes))) (first steps) (h label) label fl)
+          #_(read-line)
           (if fl
             (recur (rest steps) (lens-ins boxes label fl))
             (recur (rest steps) (lens-rem boxes label))))
-        (focusing-power boxes)
-        #_(apply + (flatten (focusing-power boxes)))))))
+        #_(focusing-power boxes)
+        (apply + (flatten (focusing-power boxes)))))))
 
 (require '[clojure.pprint :refer [pprint]])
 
