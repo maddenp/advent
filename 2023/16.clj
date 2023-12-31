@@ -26,12 +26,13 @@
       (if (seq q)
         (let [[r c d] (first q) visit (partial enqueue seen q a r c)]
           (aset energized r c \#)
-          (case (aget a r c)
-            \. (recur (conj seen [r c d]) (visit [d]))
-            \| (recur (conj seen [r c d]) (visit (case d :n [:n] :e [:n :s] :s [:s] :w [:n :s])))
-            \- (recur (conj seen [r c d]) (visit (case d :n [:e :w] :e [:e] :s [:e :w] :w [:w])))
-            \/ (recur (conj seen [r c d]) (visit (case d :n [:e] :e [:n] :s [:w] :w [:s])))
-            \\ (recur (conj seen [r c d]) (visit (case d :n [:w] :e [:s] :s [:e] :w [:n])))))
+          (recur (conj seen [r c d])
+                 (visit (case (aget a r c)
+                          \. [d]
+                          \| (case d :n [:n] :e [:n :s] :s [:s] :w [:n :s])
+                          \- (case d :n [:e :w] :e [:e] :s [:e :w] :w [:w])
+                          \/ (case d :n [:e] :e [:n] :s [:w] :w [:s])
+                          \\ (case d :n [:w] :e [:s] :s [:e] :w [:n])))))
         energized))))
 
 (defn part1
