@@ -19,17 +19,17 @@
       (print (aget a row col)))
     (println)))
 
-(defn part1
+(defn energize
   [a]
   (let [energized (to-array-2d (repeat (rows a) (repeat (cols a) \.)))]
     (loop [seen #{} q (list [0 0 :e])]
       (if (seq q)
         (let [[r c d] (first q) visit (partial enqueue seen q a r c)]
-          (show a)
-          (println "r" r "c" c "d" d "q" q)
+          #_(show a)
+          #_(println "r" r "c" c "d" d "q" q)
           (aset energized r c \#)
-          (show energized)
-          (read-line)
+          #_(show energized)
+          #_(read-line)
           (case (aget a r c)
             \. (recur (conj seen [r c d]) (visit [d]))
             \| (recur (conj seen [r c d]) (visit (case d :n [:n] :e [:n :s] :s [:s] :w [:n :s])))
@@ -37,6 +37,12 @@
             \/ (recur (conj seen [r c d]) (visit (case d :n [:e] :e [:n] :s [:w] :w [:s])))
             \\ (recur (conj seen [r c d]) (visit (case d :n [:w] :e [:s] :s [:e] :w [:n])))))
         energized))))
+
+(defn part1
+  [a]
+  (let [energized (energize a)]
+    (apply + (for [c (range (cols energized)) r (range (rows energized))]
+               (if (= (aget energized r c) \#) 1 0)))))
 
 (defn part2
   [a]
