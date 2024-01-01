@@ -41,10 +41,10 @@
 (defn part2
   [a]
   (let [ra (rows a) ca (cols a) rs (range ra) cs (range ca)]
-    (->> (for [[r c d] (concat (mapv vector (repeat ca 0) cs (repeat ca :s))
-                               (mapv vector (rest rs) (repeat ra (dec ca)) (repeat ra :w))
-                               (mapv vector (repeat ca (dec ra)) (rest (reverse cs)) (repeat ca :n))
-                               (mapv vector (rest (reverse (rest rs))) (repeat ca 0) (repeat ra :e)))]
+    (->> (for [[r c d] (concat (map #(vector 0 % :s) cs)
+                               (map #(vector % (dec ca) :w) (rest rs))
+                               (map #(vector (dec ra) % :n) (rest (reverse cs)))
+                               (map #(vector % 0 :e) (rest (reverse (rest rs)))))]
            (energize a r c d))
          (apply max))))
 
