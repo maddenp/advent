@@ -28,10 +28,10 @@
 
 (defn energize
   [a r c d]
-  (loop [energized #{} memo #{} q (list [r c d])]
+  (loop [q (list [r c d]) energized #{} seen #{}]
     (if (seq q)
       (let [[r c d] (first q)]
-        (recur (conj energized [r c]) (conj memo [r c d]) (q' memo q a r c d)))
+        (recur (q' seen q a r c d) (conj energized [r c]) (conj seen [r c d])))
       (count energized))))
 
 (defn part1
