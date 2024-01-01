@@ -34,7 +34,6 @@
 
 (defn energize
   [a r c d]
-  (println "@@@" r c d)
   (let [energized (to-array-2d (repeat (rows a) (repeat (cols a) \.)))]
     (loop [seen #{} q (list [r c d])]
       (if (seq q)
@@ -63,4 +62,4 @@
          (apply max))))
 
 (let [a (to-array-2d (s/split (slurp "16.txt") #"\n"))]
-  (println #_(part1 a) (part2 a)))
+  (println (part1 a) (part2 a)))
