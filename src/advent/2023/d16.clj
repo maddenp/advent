@@ -32,7 +32,7 @@
     (if (seq q)
       (let [[r c d] (first q)]
         (recur (conj energized [r c]) (conj memo [r c d]) (q' memo q a r c d)))
-        (count energized))))
+      (count energized))))
 
 (defn part1
   [a]
@@ -54,8 +54,8 @@
     [(part1 a) (part2 a)]))
 
 #_(defn show
-  [a]
-  (doseq [row (range (rows a))]
-    (doseq [col (range (cols a))]
-      (print (aget a row col)))
-    (println)))
+    [a]
+    (doseq [row (range (rows a))]
+      (doseq [col (range (cols a))]
+        (print (aget a row col)))
+      (println)))
