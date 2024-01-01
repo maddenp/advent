@@ -28,14 +28,11 @@
 
 (defn energize
   [a r c d]
-  (loop [n 0 energized #{} seen #{} q (list [r c d])]
+  (loop [energized #{} visited #{} q (list [r c d])]
     (if (seq q)
       (let [[r c d] (first q)]
-        (recur (if (energized [r c]) n (inc n))
-               (conj energized [r c])
-               (conj seen [r c d])
-               (q' seen q a r c d)))
-        n)))
+        (recur (conj energized [r c]) (conj visited [r c d]) (q' visited q a r c d)))
+        (count energized))))
 
 (defn part1
   [a]
