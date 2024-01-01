@@ -33,24 +33,34 @@
   (apply conj (rest q) (remove #(seen %) (visit a r c d))))
 
 (defn energize
-  [a]
+  [a r c d]
+  (println "@@@" r c d)
   (let [energized (to-array-2d (repeat (rows a) (repeat (cols a) \.)))]
-    (loop [seen #{} q (list [0 0 :e])]
+    (loop [seen #{} q (list [r c d])]
       (if (seq q)
         (let [[r c d] (first q)]
           (aset energized r c \#)
           (recur (conj seen [r c d]) (q' seen q a r c d)))
         energized))))
 
+(defn tally
+  [a]
+  (apply + (for [c (range (cols a)) r (range (rows a))]
+             (if (= (aget a r c) \#) 1 0))))
+  
 (defn part1
   [a]
-  (let [energized (energize a)]
-    (apply + (for [c (range (cols energized)) r (range (rows energized))]
-               (if (= (aget energized r c) \#) 1 0)))))
+  (tally (energize a 0 0 :e)))
 
 (defn part2
   [a]
-  a)
+  (let [ra (rows a) ca (cols a) rs (range ra) cs (range ca)]
+    (->> (for [[r c d] (concat (mapv vector (repeat ca 0) cs (repeat ca :s))
+                               (mapv vector (rest rs) (repeat ra (dec ca)) (repeat ra :w))
+                               (mapv vector (repeat ca (dec ra)) (rest (reverse cs)) (repeat ca :n))
+                               (mapv vector (rest (reverse (rest rs))) (repeat ca 0) (repeat ra :e)))]
+           (tally (energize a r c d)))
+         (apply max))))
 
 (let [a (to-array-2d (s/split (slurp "16.txt") #"\n"))]
-  (println (part1 a) #_(part2 a)))
+  (println #_(part1 a) (part2 a)))
