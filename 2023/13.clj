@@ -1,5 +1,6 @@
-(require '[clojure.math.combinatorics :refer [combinations]]
-         '[clojure.string :as s])
+(ns advent.2023.13
+  (:require [clojure.math.combinatorics :refer [combinations]]
+            [clojure.string :as s]))
 
 (declare alt-score alt-score-one cols npre-fwd npre-rev onediff? rows swap)
 
@@ -90,6 +91,10 @@
   [patterns]
   (apply + (for [p patterns] (+ (alt p) (/ (alt (transpose p)) 100)))))
 
-(let [input (slurp "13.txt")
-      patterns (s/split input #"\n\n")]
-  (println (part1 patterns) (part2 patterns)))
+(defn go
+  []
+  (let [input (slurp "13.txt")
+        patterns (s/split input #"\n\n")]
+    (println (part1 patterns) (part2 patterns))))
+
+(go)

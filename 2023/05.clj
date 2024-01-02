@@ -1,4 +1,5 @@
-(require '[clojure.string :as s])
+(ns advent.2023.05
+  (:require [clojure.string :as s]))
 
 (defn strs->nums
   [strs]
@@ -77,7 +78,11 @@
                       ranges))]
     (apply min (map :lb locations))))
 
-(let [blocks (s/split #_almanac (slurp "05.txt") #"(?s)\n\n")
-      seeds (strs->nums (last (s/split (first blocks) #": ")))
-      categories (rest blocks)]
-  (println (part1 categories seeds) (part2 categories seeds)))
+(defn go
+  []
+  (let [blocks (s/split #_almanac (slurp "05.txt") #"(?s)\n\n")
+        seeds (strs->nums (last (s/split (first blocks) #": ")))
+        categories (rest blocks)]
+    (println (part1 categories seeds) (part2 categories seeds))))
+
+(go)

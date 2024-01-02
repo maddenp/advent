@@ -1,4 +1,5 @@
-(require '[clojure.string :as s])
+(ns advent.2023.06
+  (:require [clojure.string :as s]))
 
 (defn s->i [s] (Long/parseLong s))
 
@@ -20,11 +21,10 @@
   (->> (map #(s->i (s/replace % #"\s+" "")) numstrs)
        n-wins))
 
-(let [input (s/split-lines (slurp "06.txt"))
-      numstrs (map #(last (re-matches #"^[^:]+:\s*(.*)$" %)) input)]
-  (println (part1 numstrs) (part2 numstrs)))
+(defn go
+  []
+  (let [input (s/split-lines (slurp "06.txt"))
+        numstrs (map #(last (re-matches #"^[^:]+:\s*(.*)$" %)) input)]
+    (println (part1 numstrs) (part2 numstrs))))
 
-(comment
-  (def document
-    (s/join "\n" ["Time:      7  15   30"
-                  "Distance:  9  40  200"])))
+(go)

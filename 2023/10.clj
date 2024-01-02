@@ -1,6 +1,7 @@
-(require '[clojure.math.combinatorics :refer [cartesian-product]]
-         '[clojure.set :refer [intersection union]]
-         '[clojure.string :as s])
+(ns advent.2023.10
+  (:require [clojure.math.combinatorics :refer [cartesian-product]]
+            [clojure.set :refer [intersection union]]
+            [clojure.string :as s]))
 
 (def fittings
   {\║ {:n #{\║ \╗ \╔} :e #{        } :s #{\║ \╚ \╝} :w #{        }}
@@ -124,18 +125,22 @@
             (/ $ 2))]
     (+ (- A (/ b 2)) 1)))
 
-(let [arr (as-> (slurp "10.txt") $
-            (apply str (map char->pipe $))
-            (s/split $ #"\n")
-            (to-array-2d $))
-      s (s->coords arr)]
-  (aset arr (first s) (last s) (s->pipe arr s))
-  (let [dists (score-cells arr s)]
-    (println (part1 dists) (part2 arr dists))))
+(defn go
+  []
+  (let [arr (as-> (slurp "10.txt") $
+              (apply str (map char->pipe $))
+              (s/split $ #"\n")
+              (to-array-2d $))
+        s (s->coords arr)]
+    (aset arr (first s) (last s) (s->pipe arr s))
+    (let [dists (score-cells arr s)]
+      (println (part1 dists) (part2 arr dists)))))
+
+(go)
 
 #_(defn show
-  [arr]
-  (doseq [row (range (rows arr))]
-    (doseq [col (range (cols arr))]
-      (print (aget arr row col)))
-    (println)))
+    [arr]
+    (doseq [row (range (rows arr))]
+      (doseq [col (range (cols arr))]
+        (print (aget arr row col)))
+      (println)))

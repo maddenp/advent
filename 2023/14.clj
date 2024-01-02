@@ -1,4 +1,5 @@
-(require '[clojure.string :as s])
+(ns advent.2023.14
+  (:require [clojure.string :as s]))
 
 (declare tilt-e tilt-n tilt-s tilt-w transpose)
 
@@ -69,5 +70,9 @@
         (weigh-all (i2l (+ i0 (dec (mod (- 1000000000 i0) (- i i0))))))
         (recur next (inc i) (assoc i2l i next) (assoc l2i next i))))))
 
-(let [lines (s/split (slurp "14.txt") #"\n")]
-  (println (part1 lines) (part2 lines)))
+(defn go
+  []
+  (let [lines (s/split (slurp "14.txt") #"\n")]
+    (println (part1 lines) (part2 lines))))
+
+(go)

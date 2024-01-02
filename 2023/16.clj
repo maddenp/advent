@@ -1,4 +1,5 @@
-(require '[clojure.string :as s])
+(ns advent.2023.16
+  (:require [clojure.string :as s]))
 
 (def offsets {:n [-1 0] :e [0 +1] :s [+1 0] :w [0 -1]})
 
@@ -46,7 +47,7 @@
   [a]
   (apply + (for [c (range (cols a)) r (range (rows a))]
              (if (= (aget a r c) \#) 1 0))))
-  
+
 (defn part1
   [a]
   (tally (energize a 0 0 :e)))
@@ -61,5 +62,9 @@
            (tally (energize a r c d)))
          (apply max))))
 
-(let [a (to-array-2d (s/split (slurp "16.txt") #"\n"))]
-  (println (part1 a) (part2 a)))
+(defn go
+  []
+  (let [a (to-array-2d (s/split (slurp "16.txt") #"\n"))]
+    (println (part1 a) (part2 a))))
+
+(go)

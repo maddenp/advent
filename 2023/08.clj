@@ -1,4 +1,5 @@
-(require '[clojure.string :as s])
+(ns advent.2023.08
+  (:require [clojure.string :as s]))
 
 (defn gcd [a b] (if (zero? b) a (recur b (mod a b))))
 (defn lcm [a b] (/ (* a b) (gcd a b)))
@@ -36,5 +37,9 @@
          (map (fn [cycle] (last (first (filter z? cycle)))))
          (reduce lcm))))
 
-(let [[lr nodes] (prep (slurp "08.txt"))]
-    (println (part1 lr nodes) (part2 lr nodes)))
+(defn go
+  []
+  (let [[lr nodes] (prep (slurp "08.txt"))]
+    (println (part1 lr nodes) (part2 lr nodes))))
+
+(go)

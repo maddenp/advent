@@ -1,5 +1,6 @@
-(require '[clojure.math.combinatorics :refer [combinations]]
-         '[clojure.string :as s])
+(ns advent.2023.11
+  (:require [clojure.math.combinatorics :refer [combinations]]
+            [clojure.string :as s]))
 
 (declare lines)
 
@@ -57,5 +58,9 @@
                         [(map #(rdist %) (walk r1 r2))
                          (map #(cdist %) (walk c1 c2))])))))
 
-(let [input (slurp "11.txt")]
-  (println (part1 input) (part2 input)))
+(defn go
+  []
+  (let [input (slurp "11.txt")]
+    (println (part1 input) (part2 input))))
+
+(go)

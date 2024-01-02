@@ -1,5 +1,6 @@
-(require '[clojure.math.combinatorics :refer [cartesian-product]]
-         '[clojure.string :as s])
+(ns advent.2023.07
+  (:require [clojure.math.combinatorics :refer [cartesian-product]]
+            [clojure.string :as s]))
 
 (defn s->i [s] (Long/parseLong s))
 
@@ -50,5 +51,9 @@
   (let [cards [\J \2 \3 \4 \5 \6 \7 \8 \9 \T \Q \K \A]]
     (common hands cards (partial best (rest cards)))))
 
-(let [input (slurp "07.txt")]
-  (println (part1 input) (part2 input)))
+(defn go
+  []
+  (let [input (slurp "07.txt")]
+    (println (part1 input) (part2 input))))
+
+(go)

@@ -1,8 +1,9 @@
-(require '[clojure.math.combinatorics
-           :refer [cartesian-product combinations]
-           :rename {cartesian-product prod}]
-         '[clojure.set :refer [difference intersection]]
-         '[clojure.string :as s])
+(ns advent.2023.03
+  (:require [clojure.math.combinatorics
+             :refer [cartesian-product combinations]
+             :rename {cartesian-product prod}]
+            [clojure.set :refer [difference intersection]]
+            [clojure.string :as s]))
 
 (declare halo runs)
 
@@ -77,6 +78,10 @@
          (map #(apply * (map :n %)))
          (apply +))))
 
-(let [input (s/split (slurp "03.txt") #"\n")
-      a (to-array-2d input)]
-  (println (part1 a) (part2 a)))
+(defn go
+  []
+  (let [input (s/split (slurp "03.txt") #"\n")
+        a (to-array-2d input)]
+    (println (part1 a) (part2 a))))
+
+(go)

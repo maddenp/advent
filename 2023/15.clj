@@ -1,4 +1,5 @@
-(require '[clojure.string :as s])
+(ns advent.2023.15
+  (:require [clojure.string :as s]))
 
 (defn h [s] (reduce #(mod (* 17 (+ %1 %2)) 256) 0 (map int s)))
 
@@ -30,5 +31,9 @@
           (recur (rest steps) (if foc-len (lens-ins boxes label foc-len) (lens-rem boxes label))))
         (apply + (flatten (focusing-power boxes)))))))
 
-(let [steps (s/split (s/trim-newline (slurp "15.txt")) #",")]
-  (println (part1 steps) (part2 steps)))
+(defn go
+  []
+  (let [steps (s/split (s/trim-newline (slurp "15.txt")) #",")]
+    (println (part1 steps) (part2 steps))))
+
+(go)

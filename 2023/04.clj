@@ -1,6 +1,7 @@
-(require '[clojure.math :refer [pow]]
-         '[clojure.set :refer [intersection]]
-         '[clojure.string :as s])
+(ns advent.2023.04
+  (:require [clojure.math :refer [pow]]
+            [clojure.set :refer [intersection]]
+            [clojure.string :as s]))
 
 (defn card-wins
   [card]
@@ -26,5 +27,9 @@
           (+ total x))
         total))))
 
-(let [cards (s/split (slurp "04.txt") #"\n")]
-  (println (part1 cards) (part2 cards)))
+(defn go
+  []
+  (let [cards (s/split (slurp "04.txt") #"\n")]
+    (println (part1 cards) (part2 cards))))
+
+(go)
