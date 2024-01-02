@@ -54,5 +54,5 @@
 
 (defn go
   [& args]
-  (let [input (slurp (io/resource "resources/2023/07.txt"))]
-    (println (part1 input) (part2 input))))
+  (let [input (slurp (io/resource "resources/2023/d07.txt"))]
+    [(part1 input) (part2 input)]))

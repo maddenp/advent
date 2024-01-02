@@ -40,5 +40,5 @@
 
 (defn go
   [& args]
-  (let [[lr nodes] (prep (slurp (io/resource "resources/2023/08.txt")))]
-    (println (part1 lr nodes) (part2 lr nodes))))
+  (let [[lr nodes] (prep (slurp (io/resource "resources/2023/d08.txt")))]
+    [(part1 lr nodes) (part2 lr nodes)]))

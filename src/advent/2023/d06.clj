@@ -24,6 +24,6 @@
 
 (defn go
   [& args]
-  (let [input (s/split-lines (slurp (io/resource "resources/2023/06.txt")))
+  (let [input (s/split-lines (slurp (io/resource "resources/2023/d06.txt")))
         numstrs (map #(last (re-matches #"^[^:]+:\s*(.*)$" %)) input)]
-    (println (part1 numstrs) (part2 numstrs))))
+    [(part1 numstrs) (part2 numstrs)]))

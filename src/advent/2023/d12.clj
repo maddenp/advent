@@ -35,5 +35,5 @@
 
 (defn go
   [& args]
-  (let [records (s/split (slurp (io/resource "resources/2023/12.txt")) #"\n")]
-    (println (part1 records) (part2 records))))
+  (let [records (s/split (slurp (io/resource "resources/2023/d12.txt")) #"\n")]
+    [(part1 records) (part2 records)]))

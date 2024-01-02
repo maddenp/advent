@@ -128,14 +128,14 @@
 
 (defn go
   [& args]
-  (let [arr (as-> (slurp (io/resource "resources/2023/10.txt")) $
+  (let [arr (as-> (slurp (io/resource "resources/2023/d10.txt")) $
               (apply str (map char->pipe $))
               (s/split $ #"\n")
               (to-array-2d $))
         s (s->coords arr)]
     (aset arr (first s) (last s) (s->pipe arr s))
     (let [dists (score-cells arr s)]
-      (println (part1 dists) (part2 arr dists)))))
+      [(part1 dists) (part2 arr dists)])))
 
 #_(defn show
     [arr]

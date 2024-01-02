@@ -65,5 +65,5 @@
 
 (defn go
   [& args]
-  (let [a (to-array-2d (s/split (slurp (io/resource "resources/2023/16.txt")) #"\n"))]
-    (println (part1 a) (part2 a))))
+  (let [a (to-array-2d (s/split (slurp (io/resource "resources/2023/d16.txt")) #"\n"))]
+    [(part1 a) (part2 a)]))

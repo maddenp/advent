@@ -94,6 +94,6 @@
 
 (defn go
   [& args]
-  (let [input (slurp (io/resource "resources/2023/13.txt"))
+  (let [input (slurp (io/resource "resources/2023/d13.txt"))
         patterns (s/split input #"\n\n")]
-    (println (part1 patterns) (part2 patterns))))
+    [(part1 patterns) (part2 patterns)]))

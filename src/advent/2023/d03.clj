@@ -81,6 +81,6 @@
 
 (defn go
   [& args]
-  (let [input (s/split (slurp (io/resource "resources/2023/03.txt")) #"\n")
+  (let [input (s/split (slurp (io/resource "resources/2023/d03.txt")) #"\n")
         a (to-array-2d input)]
-    (println (part1 a) (part2 a))))
+    [(part1 a) (part2 a)]))

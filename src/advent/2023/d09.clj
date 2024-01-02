@@ -19,8 +19,8 @@
 
 (defn go
   [& args]
-  (let [histories (as-> (slurp (io/resource "resources/2023/09.txt")) $
+  (let [histories (as-> (slurp (io/resource "resources/2023/d09.txt")) $
                     (s/split $ #"\n")
                     (map #(s/split % #"\s+" ) $)
                     (map #(map (fn [x] (Long/parseLong x)) %) $))]
-    (println (part1 histories) (part2 histories))))
+    [(part1 histories) (part2 histories)]))

@@ -34,5 +34,5 @@
 
 (defn go
   [& args]
-  (let [steps (s/split (s/trim-newline (slurp (io/resource "resources/2023/15.txt"))) #",")]
-    (println (part1 steps) (part2 steps))))
+  (let [steps (s/split (s/trim-newline (slurp (io/resource "resources/2023/d15.txt"))) #",")]
+    [(part1 steps) (part2 steps)]))
