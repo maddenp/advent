@@ -1,4 +1,4 @@
-(ns advent.2023.07
+(ns advent.2023.d07
   (:require [clojure.java.io :as io]
             [clojure.math.combinatorics :refer [cartesian-product]]
             [clojure.string :as s]))

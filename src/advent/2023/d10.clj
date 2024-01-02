@@ -1,4 +1,4 @@
-(ns advent.2023.10
+(ns advent.2023.d10
   (:require [clojure.java.io :as io]
             [clojure.math.combinatorics :refer [cartesian-product]]
             [clojure.set :refer [intersection union]]

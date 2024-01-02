@@ -1,4 +1,4 @@
-(ns advent.2023.06
+(ns advent.2023.d06
   (:require [clojure.java.io :as io]
             [clojure.string :as s]))
 

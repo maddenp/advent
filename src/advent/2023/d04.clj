@@ -1,4 +1,4 @@
-(ns advent.2023.04
+(ns advent.2023.d04
   (:require [clojure.java.io :as io]
             [clojure.math :refer [pow]]
             [clojure.set :refer [intersection]]
