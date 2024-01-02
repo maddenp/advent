@@ -1,5 +1,6 @@
 (ns advent.2023.03
-  (:require [clojure.math.combinatorics
+  (:require [clojure.java.io :as io]
+            [clojure.math.combinatorics
              :refer [cartesian-product combinations]
              :rename {cartesian-product prod}]
             [clojure.set :refer [difference intersection]]
@@ -79,9 +80,7 @@
          (apply +))))
 
 (defn go
-  []
-  (let [input (s/split (slurp "03.txt") #"\n")
+  [& args]
+  (let [input (s/split (slurp (io/resource "resources/2023/03.txt")) #"\n")
         a (to-array-2d input)]
     (println (part1 a) (part2 a))))
-
-(go)

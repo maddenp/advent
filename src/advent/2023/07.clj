@@ -1,5 +1,6 @@
 (ns advent.2023.07
-  (:require [clojure.math.combinatorics :refer [cartesian-product]]
+  (:require [clojure.java.io :as io]
+            [clojure.math.combinatorics :refer [cartesian-product]]
             [clojure.string :as s]))
 
 (defn s->i [s] (Long/parseLong s))
@@ -52,8 +53,6 @@
     (common hands cards (partial best (rest cards)))))
 
 (defn go
-  []
-  (let [input (slurp "07.txt")]
+  [& args]
+  (let [input (slurp (io/resource "resources/2023/07.txt"))]
     (println (part1 input) (part2 input))))
-
-(go)

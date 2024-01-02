@@ -1,5 +1,6 @@
 (ns advent.2023.04
-  (:require [clojure.math :refer [pow]]
+  (:require [clojure.java.io :as io]
+            [clojure.math :refer [pow]]
             [clojure.set :refer [intersection]]
             [clojure.string :as s]))
 
@@ -28,8 +29,6 @@
         total))))
 
 (defn go
-  []
-  (let [cards (s/split (slurp "04.txt") #"\n")]
+  [& args]
+  (let [cards (s/split (slurp (io/resource "resources/2023/04.txt")) #"\n")]
     (println (part1 cards) (part2 cards))))
-
-(go)

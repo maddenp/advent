@@ -1,5 +1,6 @@
 (ns advent.2023.02
-  (:require [clojure.string :as s]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as s]))
 
 (def colors [:red :green :blue])
 
@@ -41,8 +42,6 @@
   (apply + (map power (map :grabs gm))))
 
 (defn go
-  []
-  (let [input (s/split (slurp "02.txt") #"\n")]
+  [& args]
+  (let [input (s/split (slurp (io/resource "resources/2023/02.txt")) #"\n")]
     (apply println (map #(% (map game-map input)) [part1 part2]))))
-
-(go)

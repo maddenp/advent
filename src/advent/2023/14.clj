@@ -1,5 +1,6 @@
 (ns advent.2023.14
-  (:require [clojure.string :as s]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as s]))
 
 (declare tilt-e tilt-n tilt-s tilt-w transpose)
 
@@ -71,8 +72,6 @@
         (recur next (inc i) (assoc i2l i next) (assoc l2i next i))))))
 
 (defn go
-  []
-  (let [lines (s/split (slurp "14.txt") #"\n")]
+  [& args]
+  (let [lines (s/split (slurp (io/resource "resources/2023/14.txt")) #"\n")]
     (println (part1 lines) (part2 lines))))
-
-(go)

@@ -1,5 +1,6 @@
 (ns advent.2023.09
-  (:require [clojure.string :as s]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as s]))
 
 (defn extrapolate
   [history]
@@ -17,11 +18,9 @@
   (apply + (map extrapolate (map reverse histories))))
 
 (defn go
-  []
-  (let [histories (as-> (slurp "09.txt") $
+  [& args]
+  (let [histories (as-> (slurp (io/resource "resources/2023/09.txt")) $
                     (s/split $ #"\n")
                     (map #(s/split % #"\s+" ) $)
                     (map #(map (fn [x] (Long/parseLong x)) %) $))]
     (println (part1 histories) (part2 histories))))
-
-(go)

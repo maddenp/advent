@@ -1,5 +1,6 @@
 (ns advent.2023.01
-  (:require [clojure.string :as s]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as s]))
 
 (defn mark-one
   [word]
@@ -29,8 +30,6 @@
   (part1 (s/join "\n" (map mark-all (s/split text #"\n")))))
 
 (defn go
-  []
-  (let [input (slurp "01.txt")]
+  [& args]
+  (let [input (slurp (io/resource "resources/2023/01.txt"))]
     (println (part1 input) (part2 input))))
-
-(go)

@@ -1,5 +1,6 @@
 (ns advent.2023.12
-  (:require [clojure.string :as s]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as s]))
 
 (def f
   (memoize
@@ -33,8 +34,6 @@
   (apply + (map #(apply f false (unfold %)) records)))
 
 (defn go
-  []
-  (let [records (s/split (slurp "12.txt") #"\n")]
+  [& args]
+  (let [records (s/split (slurp (io/resource "resources/2023/12.txt")) #"\n")]
     (println (part1 records) (part2 records))))
-
-(go)

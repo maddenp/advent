@@ -1,5 +1,6 @@
 (ns advent.2023.16
-  (:require [clojure.string :as s]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as s]))
 
 (def offsets {:n [-1 0] :e [0 +1] :s [+1 0] :w [0 -1]})
 
@@ -63,8 +64,6 @@
          (apply max))))
 
 (defn go
-  []
-  (let [a (to-array-2d (s/split (slurp "16.txt") #"\n"))]
+  [& args]
+  (let [a (to-array-2d (s/split (slurp (io/resource "resources/2023/16.txt")) #"\n"))]
     (println (part1 a) (part2 a))))
-
-(go)

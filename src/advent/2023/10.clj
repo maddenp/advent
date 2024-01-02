@@ -1,5 +1,6 @@
 (ns advent.2023.10
-  (:require [clojure.math.combinatorics :refer [cartesian-product]]
+  (:require [clojure.java.io :as io]
+            [clojure.math.combinatorics :refer [cartesian-product]]
             [clojure.set :refer [intersection union]]
             [clojure.string :as s]))
 
@@ -126,8 +127,8 @@
     (+ (- A (/ b 2)) 1)))
 
 (defn go
-  []
-  (let [arr (as-> (slurp "10.txt") $
+  [& args]
+  (let [arr (as-> (slurp (io/resource "resources/2023/10.txt")) $
               (apply str (map char->pipe $))
               (s/split $ #"\n")
               (to-array-2d $))
@@ -135,8 +136,6 @@
     (aset arr (first s) (last s) (s->pipe arr s))
     (let [dists (score-cells arr s)]
       (println (part1 dists) (part2 arr dists)))))
-
-(go)
 
 #_(defn show
     [arr]

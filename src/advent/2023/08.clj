@@ -1,5 +1,6 @@
 (ns advent.2023.08
-  (:require [clojure.string :as s]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as s]))
 
 (defn gcd [a b] (if (zero? b) a (recur b (mod a b))))
 (defn lcm [a b] (/ (* a b) (gcd a b)))
@@ -38,8 +39,6 @@
          (reduce lcm))))
 
 (defn go
-  []
-  (let [[lr nodes] (prep (slurp "08.txt"))]
+  [& args]
+  (let [[lr nodes] (prep (slurp (io/resource "resources/2023/08.txt")))]
     (println (part1 lr nodes) (part2 lr nodes))))
-
-(go)
