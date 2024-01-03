@@ -53,13 +53,13 @@
   (let [a (to-array-2d (s/split (slurp (io/resource "resources/2023/d16.txt")) #"\n"))]
     [(part1 a) (part2 a)]))
 
+(defn -main
+  [& args]
+  (apply println (go)))
+
 #_(defn show
     [a]
     (doseq [row (range (rows a))]
       (doseq [col (range (cols a))]
         (print (aget a row col)))
       (println)))
-
-(defn -main
-  [& args]
-  (apply println (go)))
