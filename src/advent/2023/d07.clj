@@ -53,10 +53,10 @@
     (common hands cards (partial best (rest cards)))))
 
 (defn go
-  [& args]
+  [& _]
   (let [input (slurp (io/resource "resources/2023/d07.txt"))]
     [(part1 input) (part2 input)]))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))

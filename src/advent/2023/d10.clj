@@ -127,7 +127,7 @@
     (+ (- A (/ b 2)) 1)))
 
 (defn go
-  [& args]
+  [& _]
   (let [arr (as-> (slurp (io/resource "resources/2023/d10.txt")) $
               (apply str (map char->pipe $))
               (s/split $ #"\n")
@@ -145,5 +145,5 @@
       (println)))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))

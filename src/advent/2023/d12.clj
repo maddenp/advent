@@ -34,10 +34,10 @@
   (apply + (map #(apply f false (unfold %)) records)))
 
 (defn go
-  [& args]
+  [& _]
   (let [records (s/split (slurp (io/resource "resources/2023/d12.txt")) #"\n")]
     [(part1 records) (part2 records)]))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))

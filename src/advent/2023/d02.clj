@@ -42,10 +42,10 @@
   (apply + (map power (map :grabs gm))))
 
 (defn go
-  [& args]
+  [& _]
   (let [input (s/split (slurp (io/resource "resources/2023/d02.txt")) #"\n")]
     (vec (map #(% (map game-map input)) [part1 part2]))))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))

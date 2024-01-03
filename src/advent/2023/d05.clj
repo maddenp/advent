@@ -80,12 +80,12 @@
     (apply min (map :lb locations))))
 
 (defn go
-  [& args]
+  [& _]
   (let [blocks (s/split (slurp (io/resource "resources/2023/d05.txt")) #"(?s)\n\n")
         seeds (strs->nums (last (s/split (first blocks) #": ")))
         categories (rest blocks)]
     [(part1 categories seeds) (part2 categories seeds)]))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))

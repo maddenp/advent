@@ -80,11 +80,11 @@
          (apply +))))
 
 (defn go
-  [& args]
+  [& _]
   (let [input (s/split (slurp (io/resource "resources/2023/d03.txt")) #"\n")
         a (to-array-2d input)]
     [(part1 a) (part2 a)]))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))

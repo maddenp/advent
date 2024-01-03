@@ -21,5 +21,5 @@
 (deftest d16 (is (= (advent.2023.d16/go) [7996 8239])))
 
 (defn go
-  [& args]
+  [& _]
   (run-tests (find-tests 'advent.2023.test)))

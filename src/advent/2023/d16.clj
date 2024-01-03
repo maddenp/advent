@@ -49,12 +49,12 @@
          (apply max))))
 
 (defn go
-  [& args]
+  [& _]
   (let [a (to-array-2d (s/split (slurp (io/resource "resources/2023/d16.txt")) #"\n"))]
     [(part1 a) (part2 a)]))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))
 
 #_(defn show

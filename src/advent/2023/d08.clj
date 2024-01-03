@@ -39,10 +39,10 @@
          (reduce lcm))))
 
 (defn go
-  [& args]
+  [& _]
   (let [[lr nodes] (prep (slurp (io/resource "resources/2023/d08.txt")))]
     [(part1 lr nodes) (part2 lr nodes)]))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))

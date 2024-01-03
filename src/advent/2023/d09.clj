@@ -18,7 +18,7 @@
   (apply + (map extrapolate (map reverse histories))))
 
 (defn go
-  [& args]
+  [& _]
   (let [histories (as-> (slurp (io/resource "resources/2023/d09.txt")) $
                     (s/split $ #"\n")
                     (map #(s/split % #"\s+" ) $)
@@ -26,5 +26,5 @@
     [(part1 histories) (part2 histories)]))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))

@@ -72,10 +72,10 @@
         (recur next (inc i) (assoc i2l i next) (assoc l2i next i))))))
 
 (defn go
-  [& args]
+  [& _]
   (let [lines (s/split (slurp (io/resource "resources/2023/d14.txt")) #"\n")]
     [(part1 lines) (part2 lines)]))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))

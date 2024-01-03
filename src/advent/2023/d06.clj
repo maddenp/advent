@@ -23,11 +23,11 @@
        n-wins))
 
 (defn go
-  [& args]
+  [& _]
   (let [input (s/split-lines (slurp (io/resource "resources/2023/d06.txt")))
         numstrs (map #(last (re-matches #"^[^:]+:\s*(.*)$" %)) input)]
     [(part1 numstrs) (part2 numstrs)]))
 
 (defn -main
-  [& args]
+  [& _]
   (apply println (go)))
