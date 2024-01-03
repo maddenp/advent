@@ -97,3 +97,7 @@
   (let [input (slurp (io/resource "resources/2023/d13.txt"))
         patterns (s/split input #"\n\n")]
     [(part1 patterns) (part2 patterns)]))
+
+(defn -main
+  [& args]
+  (apply println (go)))

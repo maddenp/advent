@@ -75,3 +75,7 @@
   [& args]
   (let [lines (s/split (slurp (io/resource "resources/2023/d14.txt")) #"\n")]
     [(part1 lines) (part2 lines)]))
+
+(defn -main
+  [& args]
+  (apply println (go)))

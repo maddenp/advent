@@ -45,3 +45,7 @@
   [& args]
   (let [input (s/split (slurp (io/resource "resources/2023/d02.txt")) #"\n")]
     (vec (map #(% (map game-map input)) [part1 part2]))))
+
+(defn -main
+  [& args]
+  (apply println (go)))

@@ -32,3 +32,7 @@
   [& args]
   (let [cards (s/split (slurp (io/resource "resources/2023/d04.txt")) #"\n")]
     [(part1 cards) (part2 cards)]))
+
+(defn -main
+  [& args]
+  (apply println (go)))

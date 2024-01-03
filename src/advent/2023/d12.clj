@@ -37,3 +37,7 @@
   [& args]
   (let [records (s/split (slurp (io/resource "resources/2023/d12.txt")) #"\n")]
     [(part1 records) (part2 records)]))
+
+(defn -main
+  [& args]
+  (apply println (go)))

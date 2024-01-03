@@ -36,3 +36,7 @@
   [& args]
   (let [steps (s/split (s/trim-newline (slurp (io/resource "resources/2023/d15.txt"))) #",")]
     [(part1 steps) (part2 steps)]))
+
+(defn -main
+  [& args]
+  (apply println (go)))

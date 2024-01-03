@@ -143,3 +143,7 @@
       (doseq [col (range (cols arr))]
         (print (aget arr row col)))
       (println)))
+
+(defn -main
+  [& args]
+  (apply println (go)))

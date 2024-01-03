@@ -59,3 +59,7 @@
       (doseq [col (range (cols a))]
         (print (aget a row col)))
       (println)))
+
+(defn -main
+  [& args]
+  (apply println (go)))

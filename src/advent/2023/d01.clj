@@ -33,3 +33,7 @@
   [& args]
   (let [input (slurp (io/resource "resources/2023/d01.txt"))]
     [(part1 input) (part2 input)]))
+
+(defn -main
+  [& args]
+  (apply println (go)))

@@ -85,3 +85,7 @@
         seeds (strs->nums (last (s/split (first blocks) #": ")))
         categories (rest blocks)]
     [(part1 categories seeds) (part2 categories seeds)]))
+
+(defn -main
+  [& args]
+  (apply println (go)))

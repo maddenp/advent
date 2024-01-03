@@ -24,3 +24,7 @@
                     (map #(s/split % #"\s+" ) $)
                     (map #(map (fn [x] (Long/parseLong x)) %) $))]
     [(part1 histories) (part2 histories)]))
+
+(defn -main
+  [& args]
+  (apply println (go)))
