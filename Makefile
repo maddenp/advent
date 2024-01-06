@@ -1,2 +1,2 @@
 test:
-	clj -X advent.2023.test/go
+	clj -M -m advent.2023.test

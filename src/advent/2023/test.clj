@@ -20,6 +20,12 @@
 (deftest d15 (is (= (advent.2023.d15/go) [516070 244981])))
 (deftest d16 (is (= (advent.2023.d16/go) [7996 8239])))
 
-(defn go
+(def test-ns "advent.2023.test")
+
+(defn run
+  [args]
+  (run-tests (find-tests (symbol (format (str test-ns "/%s") (args :test))))))
+
+(defn -main
   [& _]
-  (run-tests (find-tests 'advent.2023.test)))
+  (run-tests (find-tests (symbol test-ns))))
