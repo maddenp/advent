@@ -1,2 +1,3 @@
 {:deps {eftest/eftest {:mvn/version "0.6.0"}
-        org.clojure/math.combinatorics {:mvn/version "0.2.0"}}}
+        org.clojure/math.combinatorics {:mvn/version "0.2.0"}
+        ubergraph/ubergraph {:mvn/version "0.8.2"}}}
