@@ -1,5 +1,6 @@
 (ns advent.2023.d03
-  (:require [clojure.java.io :as io]
+  (:require [advent.common :refer [at cols rows]]
+             [clojure.java.io :as io]
             [clojure.math.combinatorics
              :refer [cartesian-product combinations]
              :rename {cartesian-product prod}]
@@ -7,10 +8,6 @@
             [clojure.string :as s]))
 
 (declare halo runs)
-
-(defn at [a [r c]] (try (aget a r c) (catch Exception _ \.)))
-(defn cols [a] (alength (aget a 0)))
-(defn rows [a] (alength a))
 
 (defn digits
   "Coordinates containing digits."

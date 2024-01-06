@@ -1,5 +1,6 @@
 (ns advent.2023.d10
-  (:require [clojure.java.io :as io]
+  (:require [advent.common :refer [at cols rows]]
+            [clojure.java.io :as io]
             [clojure.math.combinatorics :refer [cartesian-product]]
             [clojure.set :refer [intersection union]]
             [clojure.string :as s]))
@@ -16,15 +17,12 @@
 (def offsets (zipmap dirs [[-1 0] [0 +1] [+1 0] [0 -1]]))
 (def pipes [\║ \═ \╚ \╝ \╗ \╔])
 
-(declare cols coords->neighbors direction rows vertexes)
+(declare coords->neighbors direction vertexes)
 
-(defn at [arr [r c]] (try (aget arr r c) (catch Exception _ \.)))
 (defn cells [arr] (cartesian-product (range (rows arr)) (range (cols arr))))
 (defn char->pipe [c] (or (get (zipmap [\| \- \L \J \7 \F] pipes) c) c))
-(defn cols [arr] (alength (aget arr 0)))
 (defn det [[r1 c1] [r2 c2]] (- (* r1 c2) (* r2 c1)))
 (defn fits? [c con dir] (((fittings c) dir) con))
-(defn rows [arr] (alength arr))
 
 (defn clockwise-all
   [arr dists]
@@ -136,13 +134,6 @@
     (aset arr (first s) (last s) (s->pipe arr s))
     (let [dists (score-cells arr s)]
       [(part1 dists) (part2 arr dists)])))
-
-#_(defn show
-    [arr]
-    (doseq [row (range (rows arr))]
-      (doseq [col (range (cols arr))]
-        (print (aget arr row col)))
-      (println)))
 
 (defn -main
   [& _]

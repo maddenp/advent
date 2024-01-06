@@ -1,9 +1,8 @@
 (ns advent.2023.d16
-  (:require [clojure.java.io :as io]
-            [clojure.string :as s]))
-
-(defn cols [a] (alength (aget a 0)))
-(defn rows [a] (alength a))
+  (:require [advent.common :refer [cols rows]]
+            [clojure.java.io :as io]
+            [clojure.string :as s]
+            [ubergraph.core :as uber]))
 
 (defn dirs
   [a r c d]
