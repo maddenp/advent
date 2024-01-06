@@ -1,2 +1,2 @@
 test:
-	clj -M -m advent.2023.test $(TEST)
+	clj -M:test $(TEST)
