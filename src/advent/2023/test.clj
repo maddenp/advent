@@ -22,10 +22,7 @@
 
 (def test-ns "advent.2023.test")
 
-(defn run
-  [args]
-  (run-tests (find-tests (symbol (format (str test-ns "/%s") (args :test))))))
-
 (defn -main
-  [& _]
-  (run-tests (find-tests (symbol test-ns))))
+  [& args]
+  (let [test (first args)]
+    (run-tests (find-tests (symbol (if test (format (str test-ns "/%s") test) test-ns))))))
