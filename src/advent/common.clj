@@ -8,5 +8,5 @@
   [arr]
   (doseq [row (range (rows arr))]
     (doseq [col (range (cols arr))]
-      (print (aget arr row col)))
+      (print (format "%4s" (aget arr row col))))
     (println)))

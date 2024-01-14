@@ -1,5 +1,5 @@
 (ns advent.2023.d16
-  (:require [advent.common :refer [cols rows show]]
+  (:require [advent.common :refer [cols rows]]
             [clojure.java.io :as io]
             [clojure.string :as s]
             [ubergraph.alg :refer [shortest-path]]
